@@ -1,0 +1,30 @@
+import { EntityService } from "./entity-service";
+import { FilterQuery } from "./filter-query";
+export declare class EntityCollector {
+    static SCROLL_RETRIEVE_INCREMENT: number;
+    private name;
+    private relation;
+    private properties;
+    private filterBindings;
+    private entityService;
+    private defaultFilter;
+    private defaultSorting;
+    private currentFilter;
+    private limit;
+    private skip;
+    private countTotal;
+    private countFilter;
+    private entities;
+    private activationPromise;
+    private filterDisposable;
+    private loading;
+    constructor(name: string, entityService: EntityService, defaultFilter?: FilterQuery, relation?: string, properties?: string[]);
+    setEntities(promise: Promise<Object[]>): void;
+    retrieve(limit?: number, skip?: number): Promise<Object[]>;
+    retrieveMore(increment?: number): Promise<number>;
+    protected load(limit: number, skip: number): Promise<Object[]>;
+    protected replaceEntities(entities: Object[]): Object[];
+    protected concatEntities(entities: Object[]): Object[];
+    filter(callback: (FilterQuery, any) => void, value: any): void;
+    activate(): Promise<Object[]>;
+}
