@@ -1,9 +1,10 @@
 import {BindingEngine, Disposable} from "aurelia-binding";
-import {EntityService} from "./entity-service";
+import {CancelablePromise} from "aurelia-utils";
+import {DataAccessObject} from "./data-access-object";
 import {Sorting} from "./sorting";
 import {FilterQuery} from "./filter-query";
 
-export class EntityCollector {
+export class EntityCollector<E extends Object> {
 
     public static SCROLL_RETRIEVE_INCREMENT: number = 10;
 
@@ -15,7 +16,7 @@ export class EntityCollector {
 
     private filterBindings: Object = {};
 
-    private entityService: EntityService;
+    private dataAccessObject: DataAccessObject<E>;
 
     private defaultFilter: FilterQuery;
 
@@ -35,24 +36,26 @@ export class EntityCollector {
 
     private activationPromise: Promise<any>;
 
+    private retrievePromise: CancelablePromise<E[]>;
+
     private filterDisposable: Disposable;
 
     private loading: boolean = false;
 
-    public constructor(name: string, entityService: EntityService, defaultFilter: FilterQuery = null, relation: string = "list", properties: string[] = []) {
+    public constructor(name: string, dataAccessObject: DataAccessObject<E>, defaultFilter: FilterQuery = null, relation: string = "list", properties: string[] = []) {
         this.name = name;
         this.defaultFilter = defaultFilter;
         this.currentFilter = this.defaultFilter;
-        this.entityService = entityService;
+        this.dataAccessObject = dataAccessObject;
         this.relation = relation;
         this.properties = properties;
     }
 
-    public setEntities(promise: Promise<Object[]>): void {
+    public setEntities(promise: Promise<E[]>): void {
         promise.then(this.replaceEntities.bind(this));
     }
 
-    public retrieve(limit: number = this.limit, skip: number = this.skip): Promise<Object[]> {
+    public retrieve(limit: number = this.limit, skip: number = this.skip): Promise<E[]> {
         return this.load(limit, skip).then(this.replaceEntities.bind(this));
     }
 
@@ -61,16 +64,20 @@ export class EntityCollector {
         return this.load(increment, skip).then(this.concatEntities.bind(this)).then(success => this.limit += increment);
     }
 
-    protected load(limit: number, skip: number): Promise<Object[]> {
+    protected load(limit: number, skip: number): Promise<E[]> {
+        if (this.retrievePromise) {
+            this.retrievePromise.cancel();
+        }
         this.loading = true;
-        let path = this.entityService.link(this.relation);
-        return this.entityService.searchMessage(this.name, path, this.currentFilter, limit, skip, this.defaultSorting, this.properties).then(success => {
+        this.dataAccessObject.count().then(countTotal => this.countTotal = countTotal);
+        this.dataAccessObject.count(this.currentFilter).then(countFilter => this.countFilter = countFilter);
+        this.retrievePromise = this.dataAccessObject.findAll(this.currentFilter, limit, skip, this.defaultSorting, this.properties);
+        return this.retrievePromise.then(entities => {
             this.loading = false;
-            this.countTotal = +success.headers.get(EntityService.COUNT_TOTAL_HEADER);
-            this.countFilter = +success.headers.get(EntityService.COUNT_FILTER_HEADER);
-            return success.content;
+            return entities;
         }, failure => {
             this.loading = false;
+            throw failure;
         });
     }
 

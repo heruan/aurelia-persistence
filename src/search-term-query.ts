@@ -31,9 +31,7 @@ export class SearchTermQuery implements SearchQuery {
 
     public toJSON(): any {
         let filter = {};
-        for (let [key, value] of this.map) {
-            filter[key] = value;
-        }
+        this.map.forEach((value, key) => filter[key] = value);
         return { "$keyword": filter };
     }
 

@@ -1,9 +1,7 @@
-import {autoinject} from "aurelia-dependency-injection";
 import {SearchBooleanQuery} from "./search-boolean-query";
 import {SearchContext} from "./search-context";
 import {SearchQuery} from "./search-query";
 
-@autoinject
 export class SearchBooleanContext implements SearchContext {
 
     public static BOOLEAN_CONTEXT: string = "$bool";
@@ -59,9 +57,7 @@ export class SearchBooleanContext implements SearchContext {
             return {};
         } else {
             let filter = {};
-            for (let [key, value] of this.map) {
-                filter[key] = value;
-            }
+            this.map.forEach((value, key) => filter[key] = value);
             return {
                 "$bool": filter
             };

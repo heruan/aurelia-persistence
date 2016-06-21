@@ -1,7 +1,6 @@
 import {autoinject} from "aurelia-dependency-injection";
 import {transient} from "aurelia-dependency-injection";
 import {BindingEngine, Disposable} from "aurelia-binding";
-import {EntityService} from "./entity-service";
 import {EntityCollector} from "./entity-collector";
 import {Query} from "./query";
 import {FilterQuery} from "./filter-query";
@@ -23,7 +22,7 @@ export class FilterObserver {
         this.bindingEngine = bindingEngine;
     }
 
-    public on(property: string, callback: (QueryFilter, any) => void, entityCollector: EntityCollector): EntityCollector {
+    public on<E extends Object>(property: string, callback: (QueryFilter, any) => void, entityCollector: EntityCollector<E>): EntityCollector<E> {
         this.collectors[property] = entityCollector;
         this.bindingDisposables.push(this.bindingEngine.propertyObserver(this.filterBindings, property).subscribe(value => {
             this.collectors[property].filter(callback, value);
@@ -31,7 +30,7 @@ export class FilterObserver {
         return entityCollector;
     }
 
-    public onCollection(property: string, callback: (QueryFilter, Array) => void, entityCollector: EntityCollector): EntityCollector {
+    public onCollection<E extends Object>(property: string, callback: (QueryFilter, Array) => void, entityCollector: EntityCollector<E>): EntityCollector<E> {
         this.collectors[property] = entityCollector;
         this.bindingDisposables.push(this.bindingEngine.collectionObserver(this.filterBindings[property]).subscribe(slices => {
             this.collectors[property].filter(callback, this.filterBindings[property]);
@@ -47,7 +46,7 @@ export class FilterObserver {
         return Promise.all(promises);
     }
 
-    public getCollector(property: string): EntityCollector {
+    public getCollector<E extends Object>(property: string): EntityCollector<E> {
         return this.collectors[property];
     }
 
