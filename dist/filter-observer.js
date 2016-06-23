@@ -24,6 +24,9 @@ var FilterObserver = (function () {
         this.bindingDisposables.push(this.bindingEngine.propertyObserver(this.filterBindings, property).subscribe(function (value) {
             _this.collectors[property].filter(callback, value);
         }));
+        this.bindingDisposables.push(this.bindingEngine.propertyObserver(entityCollector, "limit").subscribe(function (limit) {
+            _this.collectors[property].retrieve(limit);
+        }));
         return entityCollector;
     };
     FilterObserver.prototype.onCollection = function (property, callback, entityCollector) {
@@ -38,7 +41,7 @@ var FilterObserver = (function () {
         get: function () {
             var promises = [];
             for (var property in this.collectors) {
-                promises.push(this.collectors[property].activate());
+                promises.push(this.collectors[property].retrieve());
             }
             return Promise.all(promises);
         },

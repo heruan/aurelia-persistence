@@ -8,10 +8,6 @@ export class EntityCollector<E extends Object> {
 
     public static SCROLL_RETRIEVE_INCREMENT: number = 10;
 
-    private name: string;
-
-    private relation: string;
-
     private properties: string[];
 
     private filterBindings: Object = {};
@@ -32,7 +28,7 @@ export class EntityCollector<E extends Object> {
 
     private countFilter: number = 0;
 
-    private entities: Object[] = [];
+    private entities: E[] = [];
 
     private activationPromise: Promise<any>;
 
@@ -42,12 +38,10 @@ export class EntityCollector<E extends Object> {
 
     private loading: boolean = false;
 
-    public constructor(name: string, dataAccessObject: DataAccessObject<E>, defaultFilter: FilterQuery = null, relation: string = "list", properties: string[] = []) {
-        this.name = name;
+    public constructor(dataAccessObject: DataAccessObject<E>, defaultFilter: FilterQuery = null, properties?: string[]) {
         this.defaultFilter = defaultFilter;
         this.currentFilter = this.defaultFilter;
         this.dataAccessObject = dataAccessObject;
-        this.relation = relation;
         this.properties = properties;
     }
 
@@ -81,11 +75,11 @@ export class EntityCollector<E extends Object> {
         });
     }
 
-    protected replaceEntities(entities: Object[]): Object[] {
+    protected replaceEntities(entities: E[]): E[] {
         return this.entities = entities;
     }
 
-    protected concatEntities(entities: Object[]): Object[] {
+    protected concatEntities(entities: E[]): E[] {
         for (let entity of entities) {
             if (this.entities.indexOf(entity) < 0) {
                 this.entities.push(entity);
@@ -116,10 +110,6 @@ export class EntityCollector<E extends Object> {
         } else {
             this.entities = [];
         }
-    }
-
-    public activate(): Promise<Object[]> {
-        return this.retrieve();
     }
 
 }

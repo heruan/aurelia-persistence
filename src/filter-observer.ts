@@ -27,6 +27,9 @@ export class FilterObserver {
         this.bindingDisposables.push(this.bindingEngine.propertyObserver(this.filterBindings, property).subscribe(value => {
             this.collectors[property].filter(callback, value);
         }));
+        this.bindingDisposables.push(this.bindingEngine.propertyObserver(entityCollector, "limit").subscribe(limit => {
+            this.collectors[property].retrieve(limit);
+        }));
         return entityCollector;
     }
 
@@ -41,7 +44,7 @@ export class FilterObserver {
     get activate(): Promise<any> {
         let promises: Promise<any>[] = [];
         for (let property in this.collectors) {
-            promises.push(this.collectors[property].activate());
+            promises.push(this.collectors[property].retrieve());
         }
         return Promise.all(promises);
     }

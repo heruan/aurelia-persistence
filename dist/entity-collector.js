@@ -1,10 +1,8 @@
 "use strict";
 var filter_query_1 = require("./filter-query");
 var EntityCollector = (function () {
-    function EntityCollector(name, dataAccessObject, defaultFilter, relation, properties) {
+    function EntityCollector(dataAccessObject, defaultFilter, properties) {
         if (defaultFilter === void 0) { defaultFilter = null; }
-        if (relation === void 0) { relation = "list"; }
-        if (properties === void 0) { properties = []; }
         this.filterBindings = {};
         this.limit = 10;
         this.skip = 0;
@@ -12,11 +10,9 @@ var EntityCollector = (function () {
         this.countFilter = 0;
         this.entities = [];
         this.loading = false;
-        this.name = name;
         this.defaultFilter = defaultFilter;
         this.currentFilter = this.defaultFilter;
         this.dataAccessObject = dataAccessObject;
-        this.relation = relation;
         this.properties = properties;
     }
     EntityCollector.prototype.setEntities = function (promise) {
@@ -86,9 +82,6 @@ var EntityCollector = (function () {
         else {
             this.entities = [];
         }
-    };
-    EntityCollector.prototype.activate = function () {
-        return this.retrieve();
     };
     EntityCollector.SCROLL_RETRIEVE_INCREMENT = 10;
     return EntityCollector;
