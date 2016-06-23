@@ -1,4 +1,5 @@
 import { DataAccessObject } from "./data-access-object";
+import { Sorting } from "./sorting";
 import { FilterQuery } from "./filter-query";
 export declare class EntityCollector<E extends Object> {
     static SCROLL_RETRIEVE_INCREMENT: number;
@@ -17,7 +18,7 @@ export declare class EntityCollector<E extends Object> {
     private retrievePromise;
     private filterDisposable;
     private loading;
-    constructor(dataAccessObject: DataAccessObject<E>, defaultFilter?: FilterQuery, properties?: string[]);
+    constructor(dataAccessObject: DataAccessObject<E>, defaultSorting?: Sorting, defaultFilter?: FilterQuery, properties?: string[]);
     setEntities(promise: Promise<E[]>): void;
     retrieve(limit?: number, skip?: number): Promise<E[]>;
     retrieveMore(increment?: number): Promise<number>;

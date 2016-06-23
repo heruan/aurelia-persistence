@@ -1,8 +1,10 @@
 "use strict";
+var sorting_1 = require("./sorting");
 var filter_query_1 = require("./filter-query");
 var EntityCollector = (function () {
-    function EntityCollector(dataAccessObject, defaultFilter, properties) {
-        if (defaultFilter === void 0) { defaultFilter = null; }
+    function EntityCollector(dataAccessObject, defaultSorting, defaultFilter, properties) {
+        if (defaultSorting === void 0) { defaultSorting = new sorting_1.Sorting(); }
+        if (defaultFilter === void 0) { defaultFilter = new filter_query_1.FilterQuery(); }
         this.filterBindings = {};
         this.limit = 10;
         this.skip = 0;
@@ -10,8 +12,9 @@ var EntityCollector = (function () {
         this.countFilter = 0;
         this.entities = [];
         this.loading = false;
+        this.defaultSorting = defaultSorting;
         this.defaultFilter = defaultFilter;
-        this.currentFilter = this.defaultFilter;
+        this.currentFilter = new filter_query_1.FilterQuery().and(this.defaultFilter);
         this.dataAccessObject = dataAccessObject;
         this.properties = properties;
     }
@@ -59,22 +62,11 @@ var EntityCollector = (function () {
         return this.entities;
     };
     EntityCollector.prototype.filter = function (callback, value) {
-        var callbackFilter = null;
         if (value !== undefined) {
-            callbackFilter = new filter_query_1.FilterQuery();
-            callback.call(callbackFilter, callbackFilter, value);
+            callback.call(this, this.currentFilter, value);
         }
         else {
             this.currentFilter = this.defaultFilter;
-        }
-        if (callbackFilter !== null && this.defaultFilter !== null) {
-            this.currentFilter = new filter_query_1.FilterQuery().and(callbackFilter, this.defaultFilter);
-        }
-        else if (callbackFilter === null && this.defaultFilter !== null) {
-            this.currentFilter = this.defaultFilter;
-        }
-        else {
-            this.currentFilter = callbackFilter;
         }
         if (this.currentFilter !== null) {
             this.retrieve(this.limit, 0);
