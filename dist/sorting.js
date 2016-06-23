@@ -54,9 +54,7 @@ var Sorting = (function () {
     };
     Sorting.prototype.toJSON = function () {
         var sorting = {};
-        var toArray = JSON.parse(JSON.stringify(this.orderMap.toJSON()));
-        var orderMap = new Map(toArray.reverse());
-        orderMap.forEach(function (order, property) {
+        this.orderMap.forEach(function (order, property) {
             Object.assign(sorting, order);
         });
         return sorting;
