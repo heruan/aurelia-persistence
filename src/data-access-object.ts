@@ -10,7 +10,7 @@ export interface DataAccessObject<E extends Object> {
 
     count(filter?: Query, limit?: number, skip?: number): CancelablePromise<number>;
 
-    save<D>(entity: E, properties?: string[], data?: D): CancelablePromise<E>;
+    save<D>(entity: E, data?: D): CancelablePromise<E>;
 
     delete(entity: E): CancelablePromise<void>;
 
