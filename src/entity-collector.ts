@@ -38,9 +38,10 @@ export class EntityCollector<E extends Object> {
 
     private loading: boolean = false;
 
-    public constructor(dataAccessObject: DataAccessObject<E>, defaultFilter: FilterQuery = null, properties?: string[]) {
+    public constructor(dataAccessObject: DataAccessObject<E>, defaultSorting: Sorting = new Sorting(), defaultFilter: FilterQuery = new FilterQuery(), properties?: string[]) {
+        this.defaultSorting = defaultSorting;
         this.defaultFilter = defaultFilter;
-        this.currentFilter = this.defaultFilter;
+        this.currentFilter = new FilterQuery().and(this.defaultFilter);
         this.dataAccessObject = dataAccessObject;
         this.properties = properties;
     }
@@ -89,20 +90,10 @@ export class EntityCollector<E extends Object> {
     }
 
     public filter(callback: (FilterQuery, any) => void, value: any): void {
-        let callbackFilter = null;
         if (value !== undefined) {
-            callbackFilter = new FilterQuery();
-            callback.call(callbackFilter, callbackFilter, value);
+            callback.call(this, this.currentFilter, value);
         } else {
             this.currentFilter = this.defaultFilter;
-        }
-
-        if (callbackFilter !== null && this.defaultFilter !== null) {
-            this.currentFilter = new FilterQuery().and(callbackFilter, this.defaultFilter);
-        } else if (callbackFilter === null && this.defaultFilter !== null) {
-            this.currentFilter = this.defaultFilter;
-        } else {
-            this.currentFilter = callbackFilter;
         }
 
         if (this.currentFilter !== null) {
