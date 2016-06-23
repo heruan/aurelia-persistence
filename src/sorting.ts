@@ -55,7 +55,7 @@ export class Sorting {
     public toJSON(): any {
         let sorting = {};
         this.orderMap.forEach((order, property: string) => {
-            Object.assign(sorting, order);
+            sorting[property] = order.getDirection();
         });
         return sorting;
     }

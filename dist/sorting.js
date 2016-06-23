@@ -55,7 +55,7 @@ var Sorting = (function () {
     Sorting.prototype.toJSON = function () {
         var sorting = {};
         this.orderMap.forEach(function (order, property) {
-            Object.assign(sorting, order);
+            sorting[property] = order.getDirection();
         });
         return sorting;
     };
