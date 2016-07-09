@@ -147,31 +147,31 @@ export class FilterQuery implements Query {
         return this.field(fieldName, new FieldFilter().elemMatch(filter));
     }
 
-    public toJSON(): any {
+    public copy(): FilterQuery {
+        return new FilterQuery(this);
+    }
+
+    public toJSON(): Object {
         let filter = {};
         this.map.forEach((value, key) => filter[key] = value);
         return filter;
     }
 
-    public static fromJSON(json: string): FilterQuery {
-        return this.fromObject(JSON.parse(json));
-    }
-
-    public static fromObject(object: Object): FilterQuery {
+    public static fromJSON(object: Object): FilterQuery {
         let filter = new FilterQuery();
         for (let field in object) {
             switch (field) {
-                case GroupFilter.OR: filter.or(...object[field].map(f => FilterQuery.fromObject(f)));
+                case GroupFilter.OR: filter.or(...object[field].map(f => FilterQuery.fromJSON(f)));
                 break;
-                case GroupFilter.AND: filter.and(...object[field].map(f => FilterQuery.fromObject(f)));
+                case GroupFilter.AND: filter.and(...object[field].map(f => FilterQuery.fromJSON(f)));
                 break;
-                case GroupFilter.NOT: filter.not(...object[field].map(f => FilterQuery.fromObject(f)));
+                case GroupFilter.NOT: filter.not(...object[field].map(f => FilterQuery.fromJSON(f)));
                 break;
-                case GroupFilter.NOR: filter.nor(...object[field].map(f => FilterQuery.fromObject(f)));
+                case GroupFilter.NOR: filter.nor(...object[field].map(f => FilterQuery.fromJSON(f)));
                 break;
-                case TextFilter.TEXT: filter.text(TextFilter.fromObject(object[field]));
+                case TextFilter.TEXT: filter.text(TextFilter.fromJSON(object[field]));
                 break;
-                default: filter.field(field, FieldFilter.fromObject(object[field]));
+                default: filter.field(field, FieldFilter.fromJSON(object[field]));
             }
         }
         return filter;

@@ -53,15 +53,12 @@ var FieldFilter = (function () {
         this.map.forEach(function (value, key) { return filter[key] = value; });
         return filter;
     };
-    FieldFilter.fromJSON = function (json) {
-        return this.fromObject(JSON.parse(json));
-    };
-    FieldFilter.fromObject = function (object) {
+    FieldFilter.fromJSON = function (object) {
         var filter = new FieldFilter();
         for (var field in object) {
             switch (field) {
                 case FieldFilter.ELEM_MATCH:
-                    filter.elemMatch(filter_query_1.FilterQuery.fromObject(object[field]));
+                    filter.elemMatch(filter_query_1.FilterQuery.fromJSON(object[field]));
                     break;
                 default: filter.map.set(field, object[field]);
             }
@@ -82,4 +79,3 @@ var FieldFilter = (function () {
     return FieldFilter;
 }());
 exports.FieldFilter = FieldFilter;
-//# sourceMappingURL=field-filter.js.map

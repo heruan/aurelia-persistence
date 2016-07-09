@@ -31,7 +31,7 @@ export declare class FilterQuery implements Query {
     mod(fieldName: string, mod: number): FilterQuery;
     regex(fieldName: string, regex: string): FilterQuery;
     elemMatch(fieldName: string, filter: FilterQuery): FilterQuery;
-    toJSON(): any;
-    static fromJSON(json: string): FilterQuery;
-    static fromObject(object: Object): FilterQuery;
+    copy(): FilterQuery;
+    toJSON(): Object;
+    static fromJSON(object: Object): FilterQuery;
 }

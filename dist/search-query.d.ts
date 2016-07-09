@@ -1,4 +1,3 @@
-import { Query } from "./query";
-export declare abstract class SearchQuery implements Query {
+export declare abstract class SearchQuery {
     static SEARCH_EVENT: string;
 }

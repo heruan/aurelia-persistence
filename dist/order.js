@@ -21,4 +21,3 @@ var Order = (function () {
     return Order;
 }());
 exports.Order = Order;
-//# sourceMappingURL=order.js.map

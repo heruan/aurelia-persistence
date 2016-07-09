@@ -1,23 +1,22 @@
 "use strict";
-var search_boolean_query_1 = require("./search-boolean-query");
 var SearchBooleanContext = (function () {
-    function SearchBooleanContext() {
-        this.map = new Map();
+    function SearchBooleanContext(searchBooleanContext) {
+        this.map = searchBooleanContext ? new Map(searchBooleanContext.map) : new Map();
     }
-    SearchBooleanContext.prototype.must = function () {
+    SearchBooleanContext.prototype.and = function () {
         var queries = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             queries[_i - 0] = arguments[_i];
         }
-        return (_a = this.bool).call.apply(_a, [this, search_boolean_query_1.SearchBooleanQuery.MUST].concat(queries));
+        return (_a = this.bool).call.apply(_a, [this, SearchBooleanContext.MUST].concat(queries));
         var _a;
     };
-    SearchBooleanContext.prototype.should = function () {
+    SearchBooleanContext.prototype.or = function () {
         var queries = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             queries[_i - 0] = arguments[_i];
         }
-        return (_a = this.bool).call.apply(_a, [this, search_boolean_query_1.SearchBooleanQuery.SHOULD].concat(queries));
+        return (_a = this.bool).call.apply(_a, [this, SearchBooleanContext.SHOULD].concat(queries));
         var _a;
     };
     SearchBooleanContext.prototype.bool = function (booleanAggregator) {
@@ -26,29 +25,29 @@ var SearchBooleanContext = (function () {
             queries[_i - 1] = arguments[_i];
         }
         if (!this.map.has(booleanAggregator)) {
-            this.map.set(booleanAggregator, new search_boolean_query_1.SearchBooleanQuery());
+            this.map.set(booleanAggregator, []);
         }
         var booleanSearch = this.map.get(booleanAggregator);
         for (var _a = 0, queries_1 = queries; _a < queries_1.length; _a++) {
             var query = queries_1[_a];
-            booleanSearch.add(query);
+            booleanSearch.push(query);
         }
         return this;
     };
-    SearchBooleanContext.prototype.unsetMust = function () {
+    SearchBooleanContext.prototype.unsetAnd = function () {
         var queries = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             queries[_i - 0] = arguments[_i];
         }
-        return (_a = this.unsetBool).call.apply(_a, [this, search_boolean_query_1.SearchBooleanQuery.MUST].concat(queries));
+        return (_a = this.unsetBool).call.apply(_a, [this, SearchBooleanContext.MUST].concat(queries));
         var _a;
     };
-    SearchBooleanContext.prototype.unsetShould = function () {
+    SearchBooleanContext.prototype.unsetOr = function () {
         var queries = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             queries[_i - 0] = arguments[_i];
         }
-        return (_a = this.unsetBool).call.apply(_a, [this, search_boolean_query_1.SearchBooleanQuery.SHOULD].concat(queries));
+        return (_a = this.unsetBool).call.apply(_a, [this, SearchBooleanContext.SHOULD].concat(queries));
         var _a;
     };
     SearchBooleanContext.prototype.unsetBool = function (booleanAggregator) {
@@ -60,13 +59,16 @@ var SearchBooleanContext = (function () {
             var booleanSearch = this.map.get(booleanAggregator);
             for (var _a = 0, queries_2 = queries; _a < queries_2.length; _a++) {
                 var query = queries_2[_a];
-                booleanSearch.remove(query);
+                booleanSearch.splice(booleanSearch.indexOf(query), 1);
             }
-            if (booleanSearch.size == 0) {
+            if (booleanSearch.length == 0) {
                 this.map.delete(booleanAggregator);
             }
         }
         return this;
+    };
+    SearchBooleanContext.prototype.copy = function () {
+        return new SearchBooleanContext(this);
     };
     SearchBooleanContext.prototype.toJSON = function () {
         if (this.map.size === 0) {
@@ -81,7 +83,8 @@ var SearchBooleanContext = (function () {
         }
     };
     SearchBooleanContext.BOOLEAN_CONTEXT = "$bool";
+    SearchBooleanContext.MUST = "$must";
+    SearchBooleanContext.SHOULD = "$should";
     return SearchBooleanContext;
 }());
 exports.SearchBooleanContext = SearchBooleanContext;
-//# sourceMappingURL=search-boolean-context.js.map

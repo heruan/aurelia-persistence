@@ -4,6 +4,5 @@ export declare class TextFilter {
     private search;
     constructor(fields: string[], search: string);
     toJSON(): any;
-    static fromJSON(json: string): TextFilter;
-    static fromObject(object: Object): TextFilter;
+    static fromJSON(object: Object): TextFilter;
 }

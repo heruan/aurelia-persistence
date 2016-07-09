@@ -12,30 +12,40 @@ var aurelia_dependency_injection_1 = require("aurelia-dependency-injection");
 var aurelia_utils_1 = require("aurelia-utils");
 var order_1 = require("./order");
 var Sorting = (function () {
-    function Sorting() {
-        this.order = {};
-        this.position = {};
-        this.orderMap = new aurelia_utils_1.QueueMap();
+    function Sorting(sorting) {
+        this.map = sorting ? new aurelia_utils_1.QueueMap(sorting.map) : new aurelia_utils_1.QueueMap();
     }
+    Object.defineProperty(Sorting.prototype, "order", {
+        get: function () {
+            var sorting = {};
+            this.map.forEach(function (order, property) {
+                sorting[property] = order.getDirection();
+            });
+            return sorting;
+        },
+        set: function (order) {
+            this.map.clear();
+            for (var property in order) {
+                this.by(property, order[property]);
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
     Sorting.prototype.by = function (property, direction) {
         var order = new order_1.Order(property, direction);
-        this.order[property] = direction;
         if (direction == order_1.Order.NEUTRAL) {
-            this.orderMap.delete(property);
-            this.position[property] = direction;
+            this.map.delete(property);
         }
         else {
-            this.orderMap.set(property, order);
+            this.map.set(property, order);
         }
-        var position = 1;
-        for (var p in this.toJSON()) {
-            this.position[p] = position++;
-        }
+        Object.assign(this.order, this.toJSON());
         return this;
     };
     Sorting.prototype.toggle = function (property) {
-        if (this.orderMap.has(property)) {
-            var order = this.orderMap.get(property);
+        if (this.map.has(property)) {
+            var order = this.map.get(property);
             switch (order.getDirection()) {
                 case order_1.Order.DESC:
                     this.by(property, order_1.Order.NEUTRAL);
@@ -52,19 +62,22 @@ var Sorting = (function () {
         }
         return this;
     };
+    Sorting.prototype.copy = function () {
+        return new Sorting(this);
+    };
     Sorting.prototype.toJSON = function () {
-        var sorting = {};
-        this.orderMap.forEach(function (order, property) {
-            sorting[property] = order.getDirection();
-        });
-        return sorting;
+        return this.order;
+    };
+    Sorting.fromJSON = function (object) {
+        var filter = new Sorting();
+        filter.order = object;
+        return filter;
     };
     Sorting.SORTING_EVENT = "aurelia.persistence.sorting";
     Sorting = __decorate([
         aurelia_dependency_injection_1.autoinject, 
-        __metadata('design:paramtypes', [])
+        __metadata('design:paramtypes', [Sorting])
     ], Sorting);
     return Sorting;
 }());
 exports.Sorting = Sorting;
-//# sourceMappingURL=sorting.js.map

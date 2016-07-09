@@ -62,4 +62,3 @@ var FilterObserver = (function () {
     return FilterObserver;
 }());
 exports.FilterObserver = FilterObserver;
-//# sourceMappingURL=filter-observer.js.map

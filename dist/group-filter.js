@@ -33,4 +33,3 @@ var GroupFilter = (function () {
     return GroupFilter;
 }());
 exports.GroupFilter = GroupFilter;
-//# sourceMappingURL=group-filter.js.map

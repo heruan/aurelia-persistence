@@ -91,15 +91,11 @@ export class FieldFilter {
         return filter;
     }
 
-    public static fromJSON(json: string): FieldFilter {
-        return this.fromObject(JSON.parse(json));
-    }
-
-    public static fromObject(object: Object): FieldFilter {
+    public static fromJSON(object: Object): FieldFilter {
         let filter = new FieldFilter();
         for (let field in object) {
             switch (field) {
-                case FieldFilter.ELEM_MATCH: filter.elemMatch(FilterQuery.fromObject(object[field]));
+                case FieldFilter.ELEM_MATCH: filter.elemMatch(FilterQuery.fromJSON(object[field]));
                 break;
                 default: filter.map.set(field, object[field]);
             }

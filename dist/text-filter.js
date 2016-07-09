@@ -10,14 +10,10 @@ var TextFilter = (function () {
             "$search": this.search
         };
     };
-    TextFilter.fromJSON = function (json) {
-        return this.fromObject(JSON.parse(json));
-    };
-    TextFilter.fromObject = function (object) {
+    TextFilter.fromJSON = function (object) {
         return new TextFilter(object["$fields"], object["$search"]);
     };
     TextFilter.TEXT = "$text";
     return TextFilter;
 }());
 exports.TextFilter = TextFilter;
-//# sourceMappingURL=text-filter.js.map

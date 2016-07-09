@@ -1,24 +1,31 @@
+import {inject} from "aurelia-dependency-injection";
 import {BindingEngine, Disposable} from "aurelia-binding";
 import {CancelablePromise} from "aurelia-utils";
+import {TaskQueue} from "aurelia-task-queue";
 import {DataAccessObject} from "./data-access-object";
 import {Sorting} from "./sorting";
+import {Query} from "./query";
 import {FilterQuery} from "./filter-query";
+import {FilterBinding} from "./filter-binding";
 
-export class EntityCollector<E extends Object> {
+@inject(BindingEngine, TaskQueue)
+export class EntityCollector<E extends Object> implements Disposable {
 
     public static SCROLL_RETRIEVE_INCREMENT: number = 10;
 
     private properties: string[];
 
-    private filterBindings: Object = {};
+    private bindingEngine: BindingEngine;
+
+    private taskQueue: TaskQueue;
 
     private dataAccessObject: DataAccessObject<E>;
 
-    private defaultFilter: FilterQuery;
+    private currentFilter: Query;
 
-    private defaultSorting: Sorting;
+    private defaultFilter: Query;
 
-    private currentFilter: FilterQuery;
+    private sorting: Sorting;
 
     private limit: number = 10;
 
@@ -32,22 +39,83 @@ export class EntityCollector<E extends Object> {
 
     private activationPromise: Promise<any>;
 
-    private retrievePromise: CancelablePromise<E[]>;
+    private loadCancelables: CancelablePromise<any>[] = [];
 
-    private filterDisposable: Disposable;
+    private disposables: Disposable[] = [];
 
-    private loading: boolean = false;
+    public loading: boolean = false;
 
-    public constructor(dataAccessObject: DataAccessObject<E>, defaultSorting: Sorting = new Sorting(), defaultFilter: FilterQuery = new FilterQuery(), properties?: string[]) {
-        this.defaultSorting = defaultSorting;
+    public bindings: Object = {};
+
+    public constructor(bindingEngine: BindingEngine, taskQueue: TaskQueue, dataAccessObject: DataAccessObject<E>, sorting: Sorting = new Sorting(), defaultFilter: FilterQuery = new FilterQuery(), properties?: string[]) {
+        this.bindingEngine = bindingEngine;
+        this.taskQueue = taskQueue;
+        this.sorting = sorting;
         this.defaultFilter = defaultFilter;
-        this.currentFilter = new FilterQuery().and(this.defaultFilter);
+        this.currentFilter = this.defaultFilter.copy();
         this.dataAccessObject = dataAccessObject;
         this.properties = properties;
     }
 
-    public setEntities(promise: Promise<E[]>): void {
-        promise.then(this.replaceEntities.bind(this));
+    public on<Q extends Query, V>(property: string, callback: (query: Q, value: V) => void): EntityCollector<E> {
+        this.disposables.push(this.bindingEngine.propertyObserver(this.bindings, property).subscribe(value => {
+            this.applyFilter(callback, value);
+        }));
+        return this;
+    }
+
+    public onCollection<Q extends Query, V>(property: string, callback: (query: Q, value: V[]) => void): EntityCollector<E> {
+        this.disposables.push(this.bindingEngine.collectionObserver(this.bindings[property]).subscribe(slices => {
+            this.applyFilter(callback, this.bindings[property]);
+        }));
+        return this;
+    }
+
+    public count(filter: Query = this.currentFilter): Promise<number> {
+        return this.dataAccessObject.count(filter);
+    }
+
+    public applyFilter(callback: (FilterQuery, any) => void, value: any): void {
+        if (value !== undefined) {
+            callback.call(this, this.currentFilter, value);
+        } else {
+            this.currentFilter = this.defaultFilter.copy();
+        }
+    }
+
+    public activate(filter: FilterBinding): void {
+        Object.assign(this.bindings, filter.bindings);
+        this.sorting = filter.sorting.copy();
+        this.taskQueue.flushMicroTaskQueue();
+        if (this.currentFilter !== null) {
+            this.retrieve(this.limit, 0);
+        } else {
+            this.entities = [];
+        }
+    }
+
+    public save(name: string): FilterBinding {
+        let bindings = {};
+        for (let key in this.bindings) {
+            if (Array.isArray(this.bindings[key])) {
+                bindings[key] = this.bindings[key].slice();
+            } else {
+                bindings[key] = this.bindings[key];
+            }
+        }
+        return new FilterBinding(name, this.currentFilter.copy(), this.sorting.copy(), bindings, this.countFilter);
+    }
+
+    public reset(): void {
+        for (let field in this.bindings) {
+            this.bindings[field] = undefined;
+        }
+        this.currentFilter = this.defaultFilter;
+        this.sorting = new Sorting();
+    }
+
+    public dispose(): void {
+        this.disposables.forEach(disposable => disposable.dispose());
     }
 
     public retrieve(limit: number = this.limit, skip: number = this.skip): Promise<E[]> {
@@ -57,23 +125,6 @@ export class EntityCollector<E extends Object> {
     public retrieveMore(increment: number = EntityCollector.SCROLL_RETRIEVE_INCREMENT): Promise<number> {
         let skip = this.limit;
         return this.load(increment, skip).then(this.concatEntities.bind(this)).then(success => this.limit += increment);
-    }
-
-    protected load(limit: number, skip: number): Promise<E[]> {
-        if (this.retrievePromise) {
-            this.retrievePromise.cancel();
-        }
-        this.loading = true;
-        this.dataAccessObject.count().then(countTotal => this.countTotal = countTotal);
-        this.dataAccessObject.count(this.currentFilter).then(countFilter => this.countFilter = countFilter);
-        this.retrievePromise = this.dataAccessObject.findAll(this.currentFilter, limit, skip, this.defaultSorting, this.properties);
-        return this.retrievePromise.then(entities => {
-            this.loading = false;
-            return entities;
-        }, failure => {
-            this.loading = false;
-            throw failure;
-        });
     }
 
     protected replaceEntities(entities: E[]): E[] {
@@ -89,18 +140,20 @@ export class EntityCollector<E extends Object> {
         return this.entities;
     }
 
-    public filter(callback: (FilterQuery, any) => void, value: any): void {
-        if (value !== undefined) {
-            callback.call(this, this.currentFilter, value);
-        } else {
-            this.currentFilter = this.defaultFilter;
-        }
-
-        if (this.currentFilter !== null) {
-            this.retrieve(this.limit, 0);
-        } else {
-            this.entities = [];
-        }
+    protected load(limit: number, skip: number): Promise<E[]> {
+        this.loadCancelables.forEach(cancelable => cancelable.cancel());
+        this.loading = true;
+        let countTotalRequest = this.dataAccessObject.count();
+        let countFilterRequest = this.dataAccessObject.count(this.currentFilter);
+        let retrieveRequest = this.dataAccessObject.findAll(this.currentFilter, limit, skip, this.sorting, this.properties);
+        this.loadCancelables = [ countTotalRequest, countFilterRequest, retrieveRequest ];
+        return Promise.all(this.loadCancelables).then(success => {
+            let [ countTotal, countFilter, entities ] = success;
+            this.loading = false;
+            this.countTotal = countTotal;
+            this.countFilter = countFilter;
+            return entities;
+        });
     }
 
 }

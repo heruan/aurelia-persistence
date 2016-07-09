@@ -1,6 +1,6 @@
 import {SearchQuery} from "./search-query";
 
-export class SearchTermQuery implements SearchQuery {
+export class SearchTermQuery extends SearchQuery {
 
     public static FIELDS = "$fields";
 
@@ -10,8 +10,9 @@ export class SearchTermQuery implements SearchQuery {
 
     private map: Map<string, any>;
 
-    public constructor() {
-        this.map = new Map<string, any>();
+    public constructor(searchTermQuery?: SearchTermQuery) {
+        super();
+        this.map = searchTermQuery ? new Map<string, any>(searchTermQuery.map) : new Map<string, any>();
     }
 
     public wildcard(wildcard: boolean = true): SearchTermQuery {
@@ -27,6 +28,10 @@ export class SearchTermQuery implements SearchQuery {
     public matching(matching: string): SearchTermQuery {
         this.map.set(SearchTermQuery.MATCHING, matching);
         return this;
+    }
+
+    public copy(): SearchTermQuery {
+        return new SearchTermQuery(this);
     }
 
     public toJSON(): any {

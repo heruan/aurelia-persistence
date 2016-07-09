@@ -7,35 +7,41 @@ export class Sorting {
 
     public static SORTING_EVENT: string = "aurelia.persistence.sorting";
 
-    private orderMap: QueueMap<string, Order>;
+    private map: QueueMap<string, Order>;
 
-    private order: Object = {};
+    public constructor(sorting?: Sorting) {
+        this.map = sorting ? new QueueMap<string, Order>(sorting.map) : new QueueMap<string, Order>();
+    }
 
-    private position: Object = {};
+    get order(): Object {
+        let sorting = {};
+        this.map.forEach((order, property: string) => {
+            sorting[property] = order.getDirection();
+        });
+        return sorting;
+    }
 
-    public constructor() {
-        this.orderMap = new QueueMap<string, Order>();
+    set order(order: Object) {
+        this.map.clear();
+        for (let property in order) {
+            this.by(property, order[property]);
+        }
     }
 
     public by(property: string, direction: number): Sorting {
         let order = new Order(property, direction);
-        this.order[property] = direction;
         if (direction == Order.NEUTRAL) {
-            this.orderMap.delete(property);
-            this.position[property] = direction;
+            this.map.delete(property);
         } else {
-            this.orderMap.set(property, order);
+            this.map.set(property, order);
         }
-        let position = 1;
-        for (let p in this.toJSON()) {
-            this.position[p] = position++;
-        }
+        Object.assign(this.order, this.toJSON());
         return this;
     }
 
     public toggle(property: string): Sorting {
-        if (this.orderMap.has(property)) {
-            let order = this.orderMap.get(property);
+        if (this.map.has(property)) {
+            let order = this.map.get(property);
             switch (order.getDirection()) {
                 case Order.DESC:
                 this.by(property, Order.NEUTRAL);
@@ -52,12 +58,18 @@ export class Sorting {
         return this;
     }
 
-    public toJSON(): any {
-        let sorting = {};
-        this.orderMap.forEach((order, property: string) => {
-            sorting[property] = order.getDirection();
-        });
-        return sorting;
+    public copy(): Sorting {
+        return new Sorting(this);
+    }
+
+    public toJSON(): Object {
+        return this.order;
+    }
+
+    public static fromJSON(object: Object): Sorting {
+        let filter = new Sorting();
+        filter.order = object;
+        return filter;
     }
 
 }

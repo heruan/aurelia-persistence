@@ -6,4 +6,3 @@ var SearchQuery = (function () {
     return SearchQuery;
 }());
 exports.SearchQuery = SearchQuery;
-//# sourceMappingURL=search-query.js.map

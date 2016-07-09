@@ -25,6 +25,5 @@ export declare class FieldFilter {
     regex(regex: string): FieldFilter;
     elemMatch(filter: FilterQuery): FieldFilter;
     toJSON(): any;
-    static fromJSON(json: string): FieldFilter;
-    static fromObject(object: Object): FieldFilter;
+    static fromJSON(object: Object): FieldFilter;
 }

@@ -18,11 +18,7 @@ export class TextFilter {
         };
     }
 
-    public static fromJSON(json: string): TextFilter {
-        return this.fromObject(JSON.parse(json));
-    }
-
-    public static fromObject(object: Object): TextFilter {
+    public static fromJSON(object: Object): TextFilter {
         return new TextFilter(object["$fields"], object["$search"]);
     }
 

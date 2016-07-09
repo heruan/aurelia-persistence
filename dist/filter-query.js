@@ -164,34 +164,34 @@ var FilterQuery = (function () {
     FilterQuery.prototype.elemMatch = function (fieldName, filter) {
         return this.field(fieldName, new field_filter_1.FieldFilter().elemMatch(filter));
     };
+    FilterQuery.prototype.copy = function () {
+        return new FilterQuery(this);
+    };
     FilterQuery.prototype.toJSON = function () {
         var filter = {};
         this.map.forEach(function (value, key) { return filter[key] = value; });
         return filter;
     };
-    FilterQuery.fromJSON = function (json) {
-        return this.fromObject(JSON.parse(json));
-    };
-    FilterQuery.fromObject = function (object) {
+    FilterQuery.fromJSON = function (object) {
         var filter = new FilterQuery();
         for (var field in object) {
             switch (field) {
                 case group_filter_1.GroupFilter.OR:
-                    filter.or.apply(filter, object[field].map(function (f) { return FilterQuery.fromObject(f); }));
+                    filter.or.apply(filter, object[field].map(function (f) { return FilterQuery.fromJSON(f); }));
                     break;
                 case group_filter_1.GroupFilter.AND:
-                    filter.and.apply(filter, object[field].map(function (f) { return FilterQuery.fromObject(f); }));
+                    filter.and.apply(filter, object[field].map(function (f) { return FilterQuery.fromJSON(f); }));
                     break;
                 case group_filter_1.GroupFilter.NOT:
-                    filter.not.apply(filter, object[field].map(function (f) { return FilterQuery.fromObject(f); }));
+                    filter.not.apply(filter, object[field].map(function (f) { return FilterQuery.fromJSON(f); }));
                     break;
                 case group_filter_1.GroupFilter.NOR:
-                    filter.nor.apply(filter, object[field].map(function (f) { return FilterQuery.fromObject(f); }));
+                    filter.nor.apply(filter, object[field].map(function (f) { return FilterQuery.fromJSON(f); }));
                     break;
                 case text_filter_1.TextFilter.TEXT:
-                    filter.text(text_filter_1.TextFilter.fromObject(object[field]));
+                    filter.text(text_filter_1.TextFilter.fromJSON(object[field]));
                     break;
-                default: filter.field(field, field_filter_1.FieldFilter.fromObject(object[field]));
+                default: filter.field(field, field_filter_1.FieldFilter.fromJSON(object[field]));
             }
         }
         return filter;
@@ -204,4 +204,3 @@ var FilterQuery = (function () {
     return FilterQuery;
 }());
 exports.FilterQuery = FilterQuery;
-//# sourceMappingURL=filter-query.js.map
