@@ -12,6 +12,8 @@ export interface PersistenceManager {
 
     count<E extends Object>(type: new() => E, filter?: Query, limit?: number, skip?: number): CancelablePromise<number>;
 
+    get<E extends Object>(type: new() => E, params: Object, properties?: string[]): CancelablePromise<E>;
+
     save<E extends Object, D>(type: new() => E, entity: E, data?: D): CancelablePromise<E>;
 
     delete<E extends Object>(type: new() => E, entity: E): CancelablePromise<void>;
