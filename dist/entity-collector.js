@@ -24,41 +24,59 @@ var EntityCollector = (function () {
         this.countFilter = 0;
         this.entities = [];
         this.loadCancelables = [];
+        this.countCancelables = [];
         this.disposables = [];
         this.loading = false;
         this.bindings = {};
+        this.properties = [];
         this.bindingEngine = bindingEngine;
         this.taskQueue = taskQueue;
         this.sorting = sorting;
         this.defaultFilter = defaultFilter;
-        this.currentFilter = this.defaultFilter.copy();
+        this.currentFilter = new filter_query_1.FilterQuery();
         this.dataAccessObject = dataAccessObject;
         this.properties = properties;
     }
-    EntityCollector.prototype.on = function (property, callback) {
+    EntityCollector.prototype.setDefaultFilter = function (filter) {
+        this.defaultFilter = filter;
+    };
+    EntityCollector.prototype.setSorting = function (sorting) {
+        this.sorting = sorting;
+    };
+    EntityCollector.prototype.setProperties = function (properties) {
+        this.properties = properties;
+    };
+    EntityCollector.prototype.on = function (property, callback, autoRetrieve) {
         var _this = this;
+        if (autoRetrieve === void 0) { autoRetrieve = false; }
         this.disposables.push(this.bindingEngine.propertyObserver(this.bindings, property).subscribe(function (value) {
             _this.applyFilter(callback, value);
+            if (autoRetrieve) {
+                _this.retrieve();
+            }
         }));
         return this;
     };
-    EntityCollector.prototype.onCollection = function (property, callback) {
+    EntityCollector.prototype.onCollection = function (property, callback, autoRetrieve) {
         var _this = this;
+        if (autoRetrieve === void 0) { autoRetrieve = false; }
         this.disposables.push(this.bindingEngine.collectionObserver(this.bindings[property]).subscribe(function (slices) {
             _this.applyFilter(callback, _this.bindings[property]);
+            if (autoRetrieve) {
+                _this.retrieve();
+            }
         }));
         return this;
     };
     EntityCollector.prototype.count = function (filter) {
         if (filter === void 0) { filter = this.currentFilter; }
-        return this.dataAccessObject.count(filter);
+        var cancelable = this.dataAccessObject.count(new filter_query_1.FilterQuery().and(this.defaultFilter, filter));
+        this.countCancelables.push(cancelable);
+        return cancelable;
     };
     EntityCollector.prototype.applyFilter = function (callback, value) {
         if (value !== undefined) {
             callback.call(this, this.currentFilter, value);
-        }
-        else {
-            this.currentFilter = this.defaultFilter.copy();
         }
     };
     EntityCollector.prototype.activate = function (filter) {
@@ -88,11 +106,13 @@ var EntityCollector = (function () {
         for (var field in this.bindings) {
             this.bindings[field] = undefined;
         }
-        this.currentFilter = this.defaultFilter;
+        this.currentFilter = new filter_query_1.FilterQuery();
         this.sorting = new sorting_1.Sorting();
     };
     EntityCollector.prototype.dispose = function () {
         this.disposables.forEach(function (disposable) { return disposable.dispose(); });
+        this.loadCancelables.forEach(function (cancelable) { return cancelable.cancel(); });
+        this.countCancelables.forEach(function (cancelable) { return cancelable.cancel(); });
     };
     EntityCollector.prototype.retrieve = function (limit, skip) {
         if (limit === void 0) { limit = this.limit; }
@@ -121,9 +141,10 @@ var EntityCollector = (function () {
         var _this = this;
         this.loadCancelables.forEach(function (cancelable) { return cancelable.cancel(); });
         this.loading = true;
+        var loadFilter = new filter_query_1.FilterQuery().and(this.defaultFilter, this.currentFilter);
         var countTotalRequest = this.dataAccessObject.count();
         var countFilterRequest = this.dataAccessObject.count(this.currentFilter);
-        var retrieveRequest = this.dataAccessObject.findAll(this.currentFilter, limit, skip, this.sorting, this.properties);
+        var retrieveRequest = this.dataAccessObject.findAll(loadFilter, limit, skip, this.sorting, this.properties);
         this.loadCancelables = [countTotalRequest, countFilterRequest, retrieveRequest];
         return Promise.all(this.loadCancelables).then(function (success) {
             var countTotal = success[0], countFilter = success[1], entities = success[2];

@@ -13,17 +13,15 @@ export class EntityCollector<E extends Object> implements Disposable {
 
     public static SCROLL_RETRIEVE_INCREMENT: number = 10;
 
-    private properties: string[];
-
     private bindingEngine: BindingEngine;
 
     private taskQueue: TaskQueue;
 
     private dataAccessObject: DataAccessObject<E>;
 
-    private currentFilter: Query;
+    private currentFilter: FilterQuery;
 
-    private defaultFilter: Query;
+    private defaultFilter: FilterQuery;
 
     private sorting: Sorting;
 
@@ -41,45 +39,67 @@ export class EntityCollector<E extends Object> implements Disposable {
 
     private loadCancelables: CancelablePromise<any>[] = [];
 
+    private countCancelables: CancelablePromise<any>[] = [];
+
     private disposables: Disposable[] = [];
 
     public loading: boolean = false;
 
     public bindings: Object = {};
 
+    public properties: string[] = [];
+
     public constructor(bindingEngine: BindingEngine, taskQueue: TaskQueue, dataAccessObject: DataAccessObject<E>, sorting: Sorting = new Sorting(), defaultFilter: FilterQuery = new FilterQuery(), properties?: string[]) {
         this.bindingEngine = bindingEngine;
         this.taskQueue = taskQueue;
         this.sorting = sorting;
         this.defaultFilter = defaultFilter;
-        this.currentFilter = this.defaultFilter.copy();
+        this.currentFilter = new FilterQuery();
         this.dataAccessObject = dataAccessObject;
         this.properties = properties;
     }
 
-    public on<Q extends Query, V>(property: string, callback: (query: Q, value: V) => void): EntityCollector<E> {
+    public setDefaultFilter(filter: FilterQuery): void {
+        this.defaultFilter = filter;
+    }
+
+    public setSorting(sorting: Sorting): void {
+        this.sorting = sorting;
+    }
+
+    public setProperties(properties: string[]): void {
+        this.properties = properties;
+    }
+
+    public on<Q extends Query, V>(property: string, callback: (query: Q, value: V) => void, autoRetrieve: boolean = false): EntityCollector<E> {
         this.disposables.push(this.bindingEngine.propertyObserver(this.bindings, property).subscribe(value => {
             this.applyFilter(callback, value);
+            if (autoRetrieve) {
+                this.retrieve();
+            }
         }));
         return this;
     }
 
-    public onCollection<Q extends Query, V>(property: string, callback: (query: Q, value: V[]) => void): EntityCollector<E> {
+    public onCollection<Q extends Query, V>(property: string, callback: (query: Q, value: V[]) => void, autoRetrieve: boolean = false): EntityCollector<E> {
         this.disposables.push(this.bindingEngine.collectionObserver(this.bindings[property]).subscribe(slices => {
             this.applyFilter(callback, this.bindings[property]);
+            if (autoRetrieve) {
+                this.retrieve();
+            }
         }));
         return this;
     }
 
-    public count(filter: Query = this.currentFilter): Promise<number> {
-        return this.dataAccessObject.count(filter);
+    public count(filter: FilterQuery = this.currentFilter): CancelablePromise<number> {
+        let cancelable = this.dataAccessObject.count(new FilterQuery().and(this.defaultFilter, filter));
+        this.countCancelables.push(cancelable);
+        return cancelable;
     }
 
     public applyFilter(callback: (FilterQuery, any) => void, value: any): void {
         if (value !== undefined) {
             callback.call(this, this.currentFilter, value);
-        } else {
-            this.currentFilter = this.defaultFilter.copy();
         }
     }
 
@@ -110,12 +130,14 @@ export class EntityCollector<E extends Object> implements Disposable {
         for (let field in this.bindings) {
             this.bindings[field] = undefined;
         }
-        this.currentFilter = this.defaultFilter;
+        this.currentFilter = new FilterQuery();
         this.sorting = new Sorting();
     }
 
     public dispose(): void {
         this.disposables.forEach(disposable => disposable.dispose());
+        this.loadCancelables.forEach(cancelable => cancelable.cancel());
+        this.countCancelables.forEach(cancelable => cancelable.cancel());
     }
 
     public retrieve(limit: number = this.limit, skip: number = this.skip): Promise<E[]> {
@@ -143,9 +165,10 @@ export class EntityCollector<E extends Object> implements Disposable {
     protected load(limit: number, skip: number): Promise<E[]> {
         this.loadCancelables.forEach(cancelable => cancelable.cancel());
         this.loading = true;
+        let loadFilter = new FilterQuery().and(this.defaultFilter, this.currentFilter);
         let countTotalRequest = this.dataAccessObject.count();
         let countFilterRequest = this.dataAccessObject.count(this.currentFilter);
-        let retrieveRequest = this.dataAccessObject.findAll(this.currentFilter, limit, skip, this.sorting, this.properties);
+        let retrieveRequest = this.dataAccessObject.findAll(loadFilter, limit, skip, this.sorting, this.properties);
         this.loadCancelables = [ countTotalRequest, countFilterRequest, retrieveRequest ];
         return Promise.all(this.loadCancelables).then(success => {
             let [ countTotal, countFilter, entities ] = success;

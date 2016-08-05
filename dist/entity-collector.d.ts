@@ -1,4 +1,5 @@
 import { BindingEngine, Disposable } from "aurelia-binding";
+import { CancelablePromise } from "aurelia-utils";
 import { TaskQueue } from "aurelia-task-queue";
 import { DataAccessObject } from "./data-access-object";
 import { Sorting } from "./sorting";
@@ -7,7 +8,6 @@ import { FilterQuery } from "./filter-query";
 import { FilterBinding } from "./filter-binding";
 export declare class EntityCollector<E extends Object> implements Disposable {
     static SCROLL_RETRIEVE_INCREMENT: number;
-    private properties;
     private bindingEngine;
     private taskQueue;
     private dataAccessObject;
@@ -21,13 +21,18 @@ export declare class EntityCollector<E extends Object> implements Disposable {
     private entities;
     private activationPromise;
     private loadCancelables;
+    private countCancelables;
     private disposables;
     loading: boolean;
     bindings: Object;
+    properties: string[];
     constructor(bindingEngine: BindingEngine, taskQueue: TaskQueue, dataAccessObject: DataAccessObject<E>, sorting?: Sorting, defaultFilter?: FilterQuery, properties?: string[]);
-    on<Q extends Query, V>(property: string, callback: (query: Q, value: V) => void): EntityCollector<E>;
-    onCollection<Q extends Query, V>(property: string, callback: (query: Q, value: V[]) => void): EntityCollector<E>;
-    count(filter?: Query): Promise<number>;
+    setDefaultFilter(filter: FilterQuery): void;
+    setSorting(sorting: Sorting): void;
+    setProperties(properties: string[]): void;
+    on<Q extends Query, V>(property: string, callback: (query: Q, value: V) => void, autoRetrieve?: boolean): EntityCollector<E>;
+    onCollection<Q extends Query, V>(property: string, callback: (query: Q, value: V[]) => void, autoRetrieve?: boolean): EntityCollector<E>;
+    count(filter?: FilterQuery): CancelablePromise<number>;
     applyFilter(callback: (FilterQuery, any) => void, value: any): void;
     activate(filter: FilterBinding): void;
     save(name: string): FilterBinding;
