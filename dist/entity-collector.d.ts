@@ -3,7 +3,6 @@ import { CancelablePromise } from "aurelia-utils";
 import { TaskQueue } from "aurelia-task-queue";
 import { DataAccessObject } from "./data-access-object";
 import { Sorting } from "./sorting";
-import { Query } from "./query";
 import { FilterQuery } from "./filter-query";
 import { FilterBinding } from "./filter-binding";
 export declare class EntityCollector<E extends Object> implements Disposable {
@@ -30,8 +29,8 @@ export declare class EntityCollector<E extends Object> implements Disposable {
     setDefaultFilter(filter: FilterQuery): void;
     setSorting(sorting: Sorting): void;
     setProperties(properties: string[]): void;
-    on<Q extends Query, V>(property: string, callback: (query: Q, value: V) => void, autoRetrieve?: boolean): EntityCollector<E>;
-    onCollection<Q extends Query, V>(property: string, callback: (query: Q, value: V[]) => void, autoRetrieve?: boolean): EntityCollector<E>;
+    on<V>(property: string, callback: (filter: FilterQuery, value: V) => void, autoRetrieve?: boolean): EntityCollector<E>;
+    onCollection<V>(property: string, callback: (filter: FilterQuery, value: V[]) => void, autoRetrieve?: boolean): EntityCollector<E>;
     count(filter?: FilterQuery): CancelablePromise<number>;
     applyFilter(callback: (FilterQuery, any) => void, value: any): void;
     activate(filter: FilterBinding): void;

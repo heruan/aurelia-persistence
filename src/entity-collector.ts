@@ -4,7 +4,6 @@ import {CancelablePromise} from "aurelia-utils";
 import {TaskQueue} from "aurelia-task-queue";
 import {DataAccessObject} from "./data-access-object";
 import {Sorting} from "./sorting";
-import {Query} from "./query";
 import {FilterQuery} from "./filter-query";
 import {FilterBinding} from "./filter-binding";
 
@@ -71,7 +70,7 @@ export class EntityCollector<E extends Object> implements Disposable {
         this.properties = properties;
     }
 
-    public on<Q extends Query, V>(property: string, callback: (query: Q, value: V) => void, autoRetrieve: boolean = false): EntityCollector<E> {
+    public on<V>(property: string, callback: (filter: FilterQuery, value: V) => void, autoRetrieve: boolean = false): EntityCollector<E> {
         this.disposables.push(this.bindingEngine.propertyObserver(this.bindings, property).subscribe(value => {
             this.applyFilter(callback, value);
             if (autoRetrieve) {
@@ -81,7 +80,7 @@ export class EntityCollector<E extends Object> implements Disposable {
         return this;
     }
 
-    public onCollection<Q extends Query, V>(property: string, callback: (query: Q, value: V[]) => void, autoRetrieve: boolean = false): EntityCollector<E> {
+    public onCollection<V>(property: string, callback: (filter: FilterQuery, value: V[]) => void, autoRetrieve: boolean = false): EntityCollector<E> {
         this.disposables.push(this.bindingEngine.collectionObserver(this.bindings[property]).subscribe(slices => {
             this.applyFilter(callback, this.bindings[property]);
             if (autoRetrieve) {
