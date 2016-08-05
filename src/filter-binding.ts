@@ -5,7 +5,7 @@ export class FilterBinding {
 
     public name: string;
 
-    public filter: FilterQuery;
+    public query: FilterQuery;
 
     public sorting: Sorting;
 
@@ -17,9 +17,9 @@ export class FilterBinding {
 
     public loading: boolean = false;
 
-    public constructor(name?: string, filter?: FilterQuery, sorting: Sorting = new Sorting(), bindings: Object = {}, startingCount: number = 0, icon: string = "filter") {
+    public constructor(name?: string, query?: FilterQuery, sorting: Sorting = new Sorting(), bindings: Object = {}, startingCount: number = 0, icon: string = "filter") {
         this.name = name;
-        this.filter = filter;
+        this.query = query;
         this.sorting = sorting;
         this.bindings = bindings;
         this.count = startingCount;
@@ -29,7 +29,7 @@ export class FilterBinding {
     public static fromJSON(object: Object): FilterBinding {
         let filterBinding = new FilterBinding();
         if (object.hasOwnProperty("name"))      filterBinding.name      = object["name"];
-        if (object.hasOwnProperty("filter"))    filterBinding.filter    = object["filter"];
+        if (object.hasOwnProperty("query"))     filterBinding.query     = object["query"];
         if (object.hasOwnProperty("sorting"))   filterBinding.sorting   = Sorting.fromJSON(object["sorting"]);
         if (object.hasOwnProperty("bindings"))  filterBinding.bindings  = object["bindings"];
         if (object.hasOwnProperty("count"))     filterBinding.count     = object["count"];
