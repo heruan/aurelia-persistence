@@ -1,11 +1,11 @@
-import {Query} from "./query";
+import {FilterQuery} from "./filter-query";
 import {Sorting} from "./sorting";
 
 export class FilterBinding {
 
     public name: string;
 
-    public query: Query;
+    public filter: FilterQuery;
 
     public sorting: Sorting;
 
@@ -17,9 +17,9 @@ export class FilterBinding {
 
     public loading: boolean = false;
 
-    public constructor(name?: string, query?: Query, sorting: Sorting = new Sorting(), bindings: Object = {}, startingCount: number = 0, icon: string = "filter") {
+    public constructor(name?: string, filter?: FilterQuery, sorting: Sorting = new Sorting(), bindings: Object = {}, startingCount: number = 0, icon: string = "filter") {
         this.name = name;
-        this.query = query;
+        this.filter = filter;
         this.sorting = sorting;
         this.bindings = bindings;
         this.count = startingCount;
@@ -29,7 +29,7 @@ export class FilterBinding {
     public static fromJSON(object: Object): FilterBinding {
         let filterBinding = new FilterBinding();
         if (object.hasOwnProperty("name"))      filterBinding.name      = object["name"];
-        if (object.hasOwnProperty("query"))     filterBinding.query     = object["query"];
+        if (object.hasOwnProperty("filter"))    filterBinding.filter    = object["filter"];
         if (object.hasOwnProperty("sorting"))   filterBinding.sorting   = Sorting.fromJSON(object["sorting"]);
         if (object.hasOwnProperty("bindings"))  filterBinding.bindings  = object["bindings"];
         if (object.hasOwnProperty("count"))     filterBinding.count     = object["count"];
