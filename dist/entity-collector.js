@@ -18,17 +18,17 @@ var EntityCollector = (function () {
     function EntityCollector(bindingEngine, taskQueue, dataAccessObject, sorting, defaultFilter, properties) {
         if (sorting === void 0) { sorting = new sorting_1.Sorting(); }
         if (defaultFilter === void 0) { defaultFilter = new filter_query_1.FilterQuery(); }
-        this.limit = 10;
+        this.loadCancelables = [];
+        this.countCancelables = [];
+        this.disposables = [];
+        this.limit = 25;
         this.skip = 0;
         this.countTotal = 0;
         this.countFilter = 0;
         this.entities = [];
-        this.loadCancelables = [];
-        this.countCancelables = [];
-        this.disposables = [];
-        this.loading = false;
         this.bindings = {};
         this.properties = [];
+        this.loading = false;
         this.bindingEngine = bindingEngine;
         this.taskQueue = taskQueue;
         this.sorting = sorting;
@@ -60,6 +60,7 @@ var EntityCollector = (function () {
     EntityCollector.prototype.onCollection = function (property, callback, autoRetrieve) {
         var _this = this;
         if (autoRetrieve === void 0) { autoRetrieve = false; }
+        Array.isArray(this.bindings[property]) || (this.bindings[property] = []);
         this.disposables.push(this.bindingEngine.collectionObserver(this.bindings[property]).subscribe(function (slices) {
             _this.applyFilter(callback, _this.bindings[property]);
             if (autoRetrieve) {
@@ -75,19 +76,25 @@ var EntityCollector = (function () {
         return cancelable;
     };
     EntityCollector.prototype.applyFilter = function (callback, value) {
-        if (value !== undefined) {
-            callback.call(this, this.currentFilter, value);
-        }
+        callback.call(this, this.currentFilter, value);
     };
     EntityCollector.prototype.activate = function (filter) {
-        Object.assign(this.bindings, filter.bindings);
+        var _this = this;
+        Object.keys(this.bindings).forEach(function (key) {
+            if (Array.isArray(_this.bindings[key])) {
+                var array = _this.bindings[key];
+                var replace = Array.isArray(filter.bindings[key]) ? filter.bindings[key] : [];
+                array.splice.apply(array, [0, array.length].concat(replace));
+            }
+            else {
+                _this.bindings[key] = filter.bindings[key];
+            }
+        });
         this.sorting = filter.sorting.copy();
         this.taskQueue.flushMicroTaskQueue();
+        this.entities.splice(0);
         if (this.currentFilter !== null) {
             this.retrieve(this.limit, 0);
-        }
-        else {
-            this.entities = [];
         }
     };
     EntityCollector.prototype.save = function (name) {
@@ -104,7 +111,12 @@ var EntityCollector = (function () {
     };
     EntityCollector.prototype.reset = function () {
         for (var field in this.bindings) {
-            this.bindings[field] = undefined;
+            if (Array.isArray(this.bindings[field])) {
+                this.bindings[field].splice(0);
+            }
+            else {
+                this.bindings[field] = undefined;
+            }
         }
         this.currentFilter = new filter_query_1.FilterQuery();
         this.sorting = new sorting_1.Sorting();

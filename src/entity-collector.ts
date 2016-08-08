@@ -22,18 +22,6 @@ export class EntityCollector<E extends Object> implements Disposable {
 
     private defaultFilter: FilterQuery;
 
-    private sorting: Sorting;
-
-    private limit: number = 10;
-
-    private skip: number = 0;
-
-    private countTotal: number = 0;
-
-    private countFilter: number = 0;
-
-    private entities: E[] = [];
-
     private activationPromise: Promise<any>;
 
     private loadCancelables: CancelablePromise<any>[] = [];
@@ -42,11 +30,23 @@ export class EntityCollector<E extends Object> implements Disposable {
 
     private disposables: Disposable[] = [];
 
-    public loading: boolean = false;
+    public sorting: Sorting;
+
+    public limit: number = 25;
+
+    public skip: number = 0;
+
+    public countTotal: number = 0;
+
+    public countFilter: number = 0;
+
+    public entities: E[] = [];
 
     public bindings: Object = {};
 
     public properties: string[] = [];
+
+    public loading: boolean = false;
 
     public constructor(bindingEngine: BindingEngine, taskQueue: TaskQueue, dataAccessObject: DataAccessObject<E>, sorting: Sorting = new Sorting(), defaultFilter: FilterQuery = new FilterQuery(), properties?: string[]) {
         this.bindingEngine = bindingEngine;
@@ -81,6 +81,7 @@ export class EntityCollector<E extends Object> implements Disposable {
     }
 
     public onCollection<V>(property: string, callback: (filter: FilterQuery, value: V[]) => void, autoRetrieve: boolean = false): EntityCollector<E> {
+        Array.isArray(this.bindings[property]) || (this.bindings[property] = []);
         this.disposables.push(this.bindingEngine.collectionObserver(this.bindings[property]).subscribe(slices => {
             this.applyFilter(callback, this.bindings[property]);
             if (autoRetrieve) {
@@ -97,19 +98,24 @@ export class EntityCollector<E extends Object> implements Disposable {
     }
 
     public applyFilter(callback: (FilterQuery, any) => void, value: any): void {
-        if (value !== undefined) {
-            callback.call(this, this.currentFilter, value);
-        }
+        callback.call(this, this.currentFilter, value);
     }
 
     public activate(filter: FilterBinding): void {
-        Object.assign(this.bindings, filter.bindings);
+        Object.keys(this.bindings).forEach(key => {
+            if (Array.isArray(this.bindings[key])) {
+                let array: any[] = this.bindings[key];
+                let replace: any[] = Array.isArray(filter.bindings[key]) ? filter.bindings[key] : [];
+                array.splice(0, array.length, ...replace);
+            } else {
+                this.bindings[key] = filter.bindings[key];
+            }
+        });
         this.sorting = filter.sorting.copy();
         this.taskQueue.flushMicroTaskQueue();
+        this.entities.splice(0);
         if (this.currentFilter !== null) {
             this.retrieve(this.limit, 0);
-        } else {
-            this.entities = [];
         }
     }
 
@@ -127,7 +133,11 @@ export class EntityCollector<E extends Object> implements Disposable {
 
     public reset(): void {
         for (let field in this.bindings) {
-            this.bindings[field] = undefined;
+            if (Array.isArray(this.bindings[field])) {
+                this.bindings[field].splice(0);
+            } else {
+                this.bindings[field] = undefined;
+            }
         }
         this.currentFilter = new FilterQuery();
         this.sorting = new Sorting();

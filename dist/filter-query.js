@@ -134,6 +134,9 @@ var FilterQuery = (function () {
     FilterQuery.prototype.equalTo = function (fieldName, value) {
         return this.field(fieldName, new field_filter_1.FieldFilter().equalTo(value));
     };
+    FilterQuery.prototype.notEqualTo = function (fieldName, value) {
+        return this.field(fieldName, new field_filter_1.FieldFilter().notEqualTo(value));
+    };
     FilterQuery.prototype.greaterThan = function (fieldName, value) {
         return this.field(fieldName, new field_filter_1.FieldFilter().greaterThan(value));
     };
@@ -146,14 +149,11 @@ var FilterQuery = (function () {
     FilterQuery.prototype.lessThanOrEqualTo = function (fieldName, value) {
         return this.field(fieldName, new field_filter_1.FieldFilter().lessThanOrEqualTo(value));
     };
-    FilterQuery.prototype.notEqualTo = function (fieldName, value) {
-        return this.field(fieldName, new field_filter_1.FieldFilter().notEqualTo(value));
-    };
     FilterQuery.prototype.in = function (fieldName, array) {
         return this.field(fieldName, new field_filter_1.FieldFilter().in(array));
     };
     FilterQuery.prototype.notIn = function (fieldName, array) {
-        return this.field(fieldName, new field_filter_1.FieldFilter().notIn(array));
+        return this.field(fieldName, new field_filter_1.FieldFilter().in(array));
     };
     FilterQuery.prototype.mod = function (fieldName, mod) {
         return this.field(fieldName, new field_filter_1.FieldFilter().mod(mod));

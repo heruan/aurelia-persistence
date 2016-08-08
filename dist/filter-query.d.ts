@@ -21,11 +21,11 @@ export declare class FilterQuery implements Query {
     unsetNor(...filters: FilterQuery[]): FilterQuery;
     unsetGroup(groupAggregator: string, ...filters: FilterQuery[]): FilterQuery;
     equalTo(fieldName: string, value: any): FilterQuery;
+    notEqualTo(fieldName: string, value: any): FilterQuery;
     greaterThan(fieldName: string, value: any): FilterQuery;
     greaterThanOrEqualTo(fieldName: string, value: any): FilterQuery;
     lessThan(fieldName: string, value: any): FilterQuery;
     lessThanOrEqualTo(fieldName: string, value: any): FilterQuery;
-    notEqualTo(fieldName: string, value: any): FilterQuery;
     in(fieldName: string, array: any[]): FilterQuery;
     notIn(fieldName: string, array: any[]): FilterQuery;
     mod(fieldName: string, mod: number): FilterQuery;

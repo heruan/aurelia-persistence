@@ -32,7 +32,7 @@ export class GroupFilter {
     }
 
     public toJSON(): any {
-        return this.group.toArray().filter(filter => Object.keys(filter).length != 0);
+        return this.group.toArray().filter(filter => filter && Object.keys(filter).length != 0);
     }
 
 }

@@ -24,7 +24,7 @@ var GroupFilter = (function () {
         configurable: true
     });
     GroupFilter.prototype.toJSON = function () {
-        return this.group.toArray().filter(function (filter) { return Object.keys(filter).length != 0; });
+        return this.group.toArray().filter(function (filter) { return filter && Object.keys(filter).length != 0; });
     };
     GroupFilter.OR = "$or";
     GroupFilter.AND = "$and";

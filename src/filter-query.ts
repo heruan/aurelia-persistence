@@ -107,6 +107,10 @@ export class FilterQuery implements Query {
         return this.field(fieldName, new FieldFilter().equalTo(value));
     }
 
+    public notEqualTo(fieldName: string, value: any): FilterQuery {
+        return this.field(fieldName, new FieldFilter().notEqualTo(value));
+    }
+
     public greaterThan(fieldName: string, value: any): FilterQuery {
         return this.field(fieldName, new FieldFilter().greaterThan(value));
     }
@@ -123,16 +127,12 @@ export class FilterQuery implements Query {
         return this.field(fieldName, new FieldFilter().lessThanOrEqualTo(value));
     }
 
-    public notEqualTo(fieldName: string, value: any): FilterQuery {
-        return this.field(fieldName, new FieldFilter().notEqualTo(value));
-    }
-
     public in(fieldName: string, array: any[]): FilterQuery {
         return this.field(fieldName, new FieldFilter().in(array));
     }
 
     public notIn(fieldName: string, array: any[]): FilterQuery {
-        return this.field(fieldName, new FieldFilter().notIn(array));
+        return this.field(fieldName, new FieldFilter().in(array));
     }
 
     public mod(fieldName: string, mod: number): FilterQuery {
