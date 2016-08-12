@@ -15,7 +15,7 @@ var sorting_1 = require("./sorting");
 var filter_query_1 = require("./filter-query");
 var filter_binding_1 = require("./filter-binding");
 var EntityCollector = (function () {
-    function EntityCollector(bindingEngine, taskQueue, dataAccessObject, sorting, defaultFilter, properties) {
+    function EntityCollector(bindingEngine, taskQueue, entityService, sorting, defaultFilter, properties) {
         if (sorting === void 0) { sorting = new sorting_1.Sorting(); }
         if (defaultFilter === void 0) { defaultFilter = new filter_query_1.FilterQuery(); }
         this.loadCancelables = [];
@@ -34,7 +34,7 @@ var EntityCollector = (function () {
         this.sorting = sorting;
         this.defaultFilter = defaultFilter;
         this.currentFilter = new filter_query_1.FilterQuery();
-        this.dataAccessObject = dataAccessObject;
+        this.entityService = entityService;
         this.properties = properties;
     }
     EntityCollector.prototype.setDefaultFilter = function (filter) {
@@ -71,7 +71,7 @@ var EntityCollector = (function () {
     };
     EntityCollector.prototype.count = function (filter) {
         if (filter === void 0) { filter = this.currentFilter; }
-        var cancelable = this.dataAccessObject.count(new filter_query_1.FilterQuery().and(this.defaultFilter, filter));
+        var cancelable = this.entityService.count(new filter_query_1.FilterQuery().and(this.defaultFilter, filter));
         this.countCancelables.push(cancelable);
         return cancelable;
     };
@@ -137,6 +137,9 @@ var EntityCollector = (function () {
         var skip = this.limit;
         return this.load(increment, skip).then(this.concatEntities.bind(this)).then(function (success) { return _this.limit += increment; });
     };
+    EntityCollector.prototype.hasMore = function () {
+        return this.entities.length < this.countFilter;
+    };
     EntityCollector.prototype.replaceEntities = function (entities) {
         return this.entities = entities;
     };
@@ -154,9 +157,9 @@ var EntityCollector = (function () {
         this.loadCancelables.forEach(function (cancelable) { return cancelable.cancel(); });
         this.loading = true;
         var loadFilter = new filter_query_1.FilterQuery().and(this.defaultFilter, this.currentFilter);
-        var countTotalRequest = this.dataAccessObject.count();
-        var countFilterRequest = this.dataAccessObject.count(this.currentFilter);
-        var retrieveRequest = this.dataAccessObject.findAll(loadFilter, limit, skip, this.sorting, this.properties);
+        var countTotalRequest = this.entityService.count();
+        var countFilterRequest = this.entityService.count(this.currentFilter);
+        var retrieveRequest = this.entityService.findAll(loadFilter, limit, skip, this.sorting, this.properties);
         this.loadCancelables = [countTotalRequest, countFilterRequest, retrieveRequest];
         return Promise.all(this.loadCancelables).then(function (success) {
             var countTotal = success[0], countFilter = success[1], entities = success[2];
@@ -166,7 +169,7 @@ var EntityCollector = (function () {
             return entities;
         });
     };
-    EntityCollector.SCROLL_RETRIEVE_INCREMENT = 10;
+    EntityCollector.SCROLL_RETRIEVE_INCREMENT = 25;
     EntityCollector = __decorate([
         aurelia_dependency_injection_1.inject(aurelia_binding_1.BindingEngine, aurelia_task_queue_1.TaskQueue), 
         __metadata('design:paramtypes', [aurelia_binding_1.BindingEngine, aurelia_task_queue_1.TaskQueue, Object, sorting_1.Sorting, filter_query_1.FilterQuery, Array])

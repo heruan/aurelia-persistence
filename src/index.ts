@@ -1,5 +1,5 @@
 export {PersistenceManager} from "./persistence-manager";
-export {DataAccessObject} from "./data-access-object";
+export {EntityService} from "./entity-service";
 export {EntityCollector} from "./entity-collector";
 export {Query} from "./query";
 export {Sorting} from "./sorting";

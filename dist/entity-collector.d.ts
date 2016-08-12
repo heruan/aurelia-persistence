@@ -1,7 +1,7 @@
 import { BindingEngine, Disposable } from "aurelia-binding";
 import { CancelablePromise } from "aurelia-utils";
 import { TaskQueue } from "aurelia-task-queue";
-import { DataAccessObject } from "./data-access-object";
+import { EntityService } from "./entity-service";
 import { Sorting } from "./sorting";
 import { FilterQuery } from "./filter-query";
 import { FilterBinding } from "./filter-binding";
@@ -9,7 +9,7 @@ export declare class EntityCollector<E extends Object> implements Disposable {
     static SCROLL_RETRIEVE_INCREMENT: number;
     private bindingEngine;
     private taskQueue;
-    private dataAccessObject;
+    private entityService;
     private currentFilter;
     private defaultFilter;
     private activationPromise;
@@ -25,7 +25,7 @@ export declare class EntityCollector<E extends Object> implements Disposable {
     bindings: Object;
     properties: string[];
     loading: boolean;
-    constructor(bindingEngine: BindingEngine, taskQueue: TaskQueue, dataAccessObject: DataAccessObject<E>, sorting?: Sorting, defaultFilter?: FilterQuery, properties?: string[]);
+    constructor(bindingEngine: BindingEngine, taskQueue: TaskQueue, entityService: EntityService<E>, sorting?: Sorting, defaultFilter?: FilterQuery, properties?: string[]);
     setDefaultFilter(filter: FilterQuery): void;
     setSorting(sorting: Sorting): void;
     setProperties(properties: string[]): void;
@@ -39,6 +39,7 @@ export declare class EntityCollector<E extends Object> implements Disposable {
     dispose(): void;
     retrieve(limit?: number, skip?: number): Promise<E[]>;
     retrieveMore(increment?: number): Promise<number>;
+    hasMore(): boolean;
     protected replaceEntities(entities: E[]): E[];
     protected concatEntities(entities: E[]): E[];
     protected load(limit: number, skip: number): Promise<E[]>;

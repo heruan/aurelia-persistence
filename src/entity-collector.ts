@@ -2,7 +2,7 @@ import {inject} from "aurelia-dependency-injection";
 import {BindingEngine, Disposable} from "aurelia-binding";
 import {CancelablePromise} from "aurelia-utils";
 import {TaskQueue} from "aurelia-task-queue";
-import {DataAccessObject} from "./data-access-object";
+import {EntityService} from "./entity-service";
 import {Sorting} from "./sorting";
 import {FilterQuery} from "./filter-query";
 import {FilterBinding} from "./filter-binding";
@@ -10,13 +10,13 @@ import {FilterBinding} from "./filter-binding";
 @inject(BindingEngine, TaskQueue)
 export class EntityCollector<E extends Object> implements Disposable {
 
-    public static SCROLL_RETRIEVE_INCREMENT: number = 10;
+    public static SCROLL_RETRIEVE_INCREMENT: number = 25;
 
     private bindingEngine: BindingEngine;
 
     private taskQueue: TaskQueue;
 
-    private dataAccessObject: DataAccessObject<E>;
+    private entityService: EntityService<E>;
 
     private currentFilter: FilterQuery;
 
@@ -48,13 +48,13 @@ export class EntityCollector<E extends Object> implements Disposable {
 
     public loading: boolean = false;
 
-    public constructor(bindingEngine: BindingEngine, taskQueue: TaskQueue, dataAccessObject: DataAccessObject<E>, sorting: Sorting = new Sorting(), defaultFilter: FilterQuery = new FilterQuery(), properties?: string[]) {
+    public constructor(bindingEngine: BindingEngine, taskQueue: TaskQueue, entityService: EntityService<E>, sorting: Sorting = new Sorting(), defaultFilter: FilterQuery = new FilterQuery(), properties?: string[]) {
         this.bindingEngine = bindingEngine;
         this.taskQueue = taskQueue;
         this.sorting = sorting;
         this.defaultFilter = defaultFilter;
         this.currentFilter = new FilterQuery();
-        this.dataAccessObject = dataAccessObject;
+        this.entityService = entityService;
         this.properties = properties;
     }
 
@@ -92,7 +92,7 @@ export class EntityCollector<E extends Object> implements Disposable {
     }
 
     public count(filter: FilterQuery = this.currentFilter): CancelablePromise<number> {
-        let cancelable = this.dataAccessObject.count(new FilterQuery().and(this.defaultFilter, filter));
+        let cancelable = this.entityService.count(new FilterQuery().and(this.defaultFilter, filter));
         this.countCancelables.push(cancelable);
         return cancelable;
     }
@@ -158,6 +158,10 @@ export class EntityCollector<E extends Object> implements Disposable {
         return this.load(increment, skip).then(this.concatEntities.bind(this)).then(success => this.limit += increment);
     }
 
+    public hasMore(): boolean {
+        return this.entities.length < this.countFilter;
+    }
+
     protected replaceEntities(entities: E[]): E[] {
         return this.entities = entities;
     }
@@ -175,9 +179,9 @@ export class EntityCollector<E extends Object> implements Disposable {
         this.loadCancelables.forEach(cancelable => cancelable.cancel());
         this.loading = true;
         let loadFilter = new FilterQuery().and(this.defaultFilter, this.currentFilter);
-        let countTotalRequest = this.dataAccessObject.count();
-        let countFilterRequest = this.dataAccessObject.count(this.currentFilter);
-        let retrieveRequest = this.dataAccessObject.findAll(loadFilter, limit, skip, this.sorting, this.properties);
+        let countTotalRequest = this.entityService.count();
+        let countFilterRequest = this.entityService.count(this.currentFilter);
+        let retrieveRequest = this.entityService.findAll(loadFilter, limit, skip, this.sorting, this.properties);
         this.loadCancelables = [ countTotalRequest, countFilterRequest, retrieveRequest ];
         return Promise.all(this.loadCancelables).then(success => {
             let [ countTotal, countFilter, entities ] = success;
