@@ -1,11 +1,13 @@
 import { BindingEngine, Disposable } from "aurelia-binding";
+import { EventAggregator } from "aurelia-event-aggregator";
 import { CancelablePromise } from "aurelia-utils";
 import { TaskQueue } from "aurelia-task-queue";
 import { EntityService } from "./entity-service";
 import { Sorting } from "./sorting";
 import { FilterQuery } from "./filter-query";
 import { FilterBinding } from "./filter-binding";
-export declare class EntityCollector<E extends Object> implements Disposable {
+export declare class EntityCollector<E extends Object> extends EventAggregator implements Disposable {
+    static ENTITIES_LOADED: string;
     static SCROLL_RETRIEVE_INCREMENT: number;
     private bindingEngine;
     private taskQueue;

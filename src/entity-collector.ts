@@ -1,5 +1,6 @@
 import {inject} from "aurelia-dependency-injection";
 import {BindingEngine, Disposable} from "aurelia-binding";
+import {EventAggregator} from "aurelia-event-aggregator";
 import {CancelablePromise} from "aurelia-utils";
 import {TaskQueue} from "aurelia-task-queue";
 import {EntityService} from "./entity-service";
@@ -8,7 +9,9 @@ import {FilterQuery} from "./filter-query";
 import {FilterBinding} from "./filter-binding";
 
 @inject(BindingEngine, TaskQueue)
-export class EntityCollector<E extends Object> implements Disposable {
+export class EntityCollector<E extends Object> extends EventAggregator implements Disposable {
+
+    public static ENTITIES_LOADED: string = "entities.loaded";
 
     public static SCROLL_RETRIEVE_INCREMENT: number = 25;
 
@@ -49,6 +52,7 @@ export class EntityCollector<E extends Object> implements Disposable {
     public loading: boolean = false;
 
     public constructor(bindingEngine: BindingEngine, taskQueue: TaskQueue, entityService: EntityService<E>, sorting: Sorting = new Sorting(), defaultFilter: FilterQuery = new FilterQuery(), properties?: string[]) {
+        super();
         this.bindingEngine = bindingEngine;
         this.taskQueue = taskQueue;
         this.sorting = sorting;
@@ -188,6 +192,7 @@ export class EntityCollector<E extends Object> implements Disposable {
             this.loading = false;
             this.countTotal = countTotal;
             this.countFilter = countFilter;
+            this.publish(EntityCollector.ENTITIES_LOADED, entities);
             return entities;
         });
     }

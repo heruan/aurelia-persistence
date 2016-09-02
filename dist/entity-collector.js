@@ -1,4 +1,9 @@
 "use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -10,14 +15,17 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var aurelia_dependency_injection_1 = require("aurelia-dependency-injection");
 var aurelia_binding_1 = require("aurelia-binding");
+var aurelia_event_aggregator_1 = require("aurelia-event-aggregator");
 var aurelia_task_queue_1 = require("aurelia-task-queue");
 var sorting_1 = require("./sorting");
 var filter_query_1 = require("./filter-query");
 var filter_binding_1 = require("./filter-binding");
-var EntityCollector = (function () {
+var EntityCollector = (function (_super) {
+    __extends(EntityCollector, _super);
     function EntityCollector(bindingEngine, taskQueue, entityService, sorting, defaultFilter, properties) {
         if (sorting === void 0) { sorting = new sorting_1.Sorting(); }
         if (defaultFilter === void 0) { defaultFilter = new filter_query_1.FilterQuery(); }
+        _super.call(this);
         this.loadCancelables = [];
         this.countCancelables = [];
         this.disposables = [];
@@ -166,14 +174,16 @@ var EntityCollector = (function () {
             _this.loading = false;
             _this.countTotal = countTotal;
             _this.countFilter = countFilter;
+            _this.publish(EntityCollector.ENTITIES_LOADED, entities);
             return entities;
         });
     };
+    EntityCollector.ENTITIES_LOADED = "entities.loaded";
     EntityCollector.SCROLL_RETRIEVE_INCREMENT = 25;
     EntityCollector = __decorate([
         aurelia_dependency_injection_1.inject(aurelia_binding_1.BindingEngine, aurelia_task_queue_1.TaskQueue), 
         __metadata('design:paramtypes', [aurelia_binding_1.BindingEngine, aurelia_task_queue_1.TaskQueue, Object, sorting_1.Sorting, filter_query_1.FilterQuery, Array])
     ], EntityCollector);
     return EntityCollector;
-}());
+}(aurelia_event_aggregator_1.EventAggregator));
 exports.EntityCollector = EntityCollector;
