@@ -153,7 +153,7 @@ var FilterQuery = (function () {
         return this.field(fieldName, new field_filter_1.FieldFilter().in(array));
     };
     FilterQuery.prototype.notIn = function (fieldName, array) {
-        return this.field(fieldName, new field_filter_1.FieldFilter().in(array));
+        return this.field(fieldName, new field_filter_1.FieldFilter().notIn(array));
     };
     FilterQuery.prototype.mod = function (fieldName, mod) {
         return this.field(fieldName, new field_filter_1.FieldFilter().mod(mod));

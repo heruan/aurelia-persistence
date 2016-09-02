@@ -132,7 +132,7 @@ export class FilterQuery implements Query {
     }
 
     public notIn(fieldName: string, array: any[]): FilterQuery {
-        return this.field(fieldName, new FieldFilter().in(array));
+        return this.field(fieldName, new FieldFilter().notIn(array));
     }
 
     public mod(fieldName: string, mod: number): FilterQuery {
