@@ -1,6 +1,6 @@
 {
   "name": "aurelia-persistence",
-  "version": "0.3.9",
+  "version": "0.3.10",
   "description": "A plugin for Aurelia based projects.",
   "keywords": [
     "aurelia",
@@ -24,8 +24,8 @@
   "dependencies": {
     "aurelia-binding": "^1.0.9",
     "aurelia-dependency-injection": "^1.2.0",
-    "aurelia-event-aggregator": "^1.0.0",
-    "aurelia-utils": "^0.2.1",
+    "aurelia-event-aggregator": "^1.0.1",
+    "aurelia-utils": "^0.2.2",
     "uniql": "^0.1.0",
     "uniql-mongodb": "^0.1.0"
   },
