@@ -1,8 +1,8 @@
-import {autoinject} from "aurelia-dependency-injection";
-import {GroupFilter} from "./group-filter";
-import {FieldFilter} from "./field-filter";
-import {TextFilter} from "./text-filter";
-import {Query} from "./query";
+import { autoinject} from "aurelia-dependency-injection";
+import { GroupFilter} from "./group-filter";
+import { FieldFilter} from "./field-filter";
+import { TextFilter} from "./text-filter";
+import { Query} from "./query";
 
 @autoinject
 export class FilterQuery implements Query {
@@ -152,7 +152,7 @@ export class FilterQuery implements Query {
     }
 
     public toJSON(): Object {
-        let filter = {};
+        let filter = { };
         this.map.forEach((value, key) => filter[key] = value);
         return filter;
     }

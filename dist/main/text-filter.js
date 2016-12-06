@@ -13,7 +13,7 @@ var TextFilter = (function () {
     TextFilter.fromJSON = function (object) {
         return new TextFilter(object["$fields"], object["$search"]);
     };
-    TextFilter.TEXT = "$text";
     return TextFilter;
 }());
 exports.TextFilter = TextFilter;
+TextFilter.TEXT = "$text";

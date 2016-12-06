@@ -8,8 +8,9 @@ var search_query_1 = require("./search-query");
 var SearchTermQuery = (function (_super) {
     __extends(SearchTermQuery, _super);
     function SearchTermQuery(searchTermQuery) {
-        _super.call(this);
-        this.map = searchTermQuery ? new Map(searchTermQuery.map) : new Map();
+        var _this = _super.call(this) || this;
+        _this.map = searchTermQuery ? new Map(searchTermQuery.map) : new Map();
+        return _this;
     }
     SearchTermQuery.prototype.wildcard = function (wildcard) {
         if (wildcard === void 0) { wildcard = true; }
@@ -32,9 +33,9 @@ var SearchTermQuery = (function (_super) {
         this.map.forEach(function (value, key) { return filter[key] = value; });
         return { "$keyword": filter };
     };
-    SearchTermQuery.FIELDS = "$fields";
-    SearchTermQuery.MATCHING = "$matching";
-    SearchTermQuery.WILDCARD = "$wildcard";
     return SearchTermQuery;
 }(search_query_1.SearchQuery));
 exports.SearchTermQuery = SearchTermQuery;
+SearchTermQuery.FIELDS = "$fields";
+SearchTermQuery.MATCHING = "$matching";
+SearchTermQuery.WILDCARD = "$wildcard";

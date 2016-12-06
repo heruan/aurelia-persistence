@@ -196,11 +196,11 @@ var FilterQuery = (function () {
         }
         return filter;
     };
-    FilterQuery.FILTERING_EVENT = "aurelia.persistence.filtering";
-    FilterQuery = __decorate([
-        aurelia_dependency_injection_1.autoinject, 
-        __metadata('design:paramtypes', [FilterQuery])
-    ], FilterQuery);
     return FilterQuery;
 }());
+FilterQuery.FILTERING_EVENT = "aurelia.persistence.filtering";
+FilterQuery = __decorate([
+    aurelia_dependency_injection_1.autoinject,
+    __metadata("design:paramtypes", [FilterQuery])
+], FilterQuery);
 exports.FilterQuery = FilterQuery;

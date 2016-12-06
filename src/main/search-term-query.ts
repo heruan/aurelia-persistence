@@ -1,4 +1,4 @@
-import {SearchQuery} from "./search-query";
+import { SearchQuery} from "./search-query";
 
 export class SearchTermQuery extends SearchQuery {
 
@@ -35,7 +35,7 @@ export class SearchTermQuery extends SearchQuery {
     }
 
     public toJSON(): any {
-        let filter = {};
+        let filter = { };
         this.map.forEach((value, key) => filter[key] = value);
         return { "$keyword": filter };
     }

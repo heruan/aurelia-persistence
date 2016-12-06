@@ -65,17 +65,17 @@ var FieldFilter = (function () {
         }
         return filter;
     };
-    FieldFilter.EQ = "$eq";
-    FieldFilter.GT = "$gt";
-    FieldFilter.GTE = "$gte";
-    FieldFilter.LT = "$lt";
-    FieldFilter.LTE = "$lte";
-    FieldFilter.NE = "$ne";
-    FieldFilter.IN = "$in";
-    FieldFilter.NIN = "$nin";
-    FieldFilter.MOD = "$mod";
-    FieldFilter.REGEX = "$regex";
-    FieldFilter.ELEM_MATCH = "$elemMatch";
     return FieldFilter;
 }());
 exports.FieldFilter = FieldFilter;
+FieldFilter.EQ = "$eq";
+FieldFilter.GT = "$gt";
+FieldFilter.GTE = "$gte";
+FieldFilter.LT = "$lt";
+FieldFilter.LTE = "$lte";
+FieldFilter.NE = "$ne";
+FieldFilter.IN = "$in";
+FieldFilter.NIN = "$nin";
+FieldFilter.MOD = "$mod";
+FieldFilter.REGEX = "$regex";
+FieldFilter.ELEM_MATCH = "$elemMatch";

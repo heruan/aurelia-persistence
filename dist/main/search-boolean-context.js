@@ -82,9 +82,9 @@ var SearchBooleanContext = (function () {
             };
         }
     };
-    SearchBooleanContext.BOOLEAN_CONTEXT = "$bool";
-    SearchBooleanContext.MUST = "$must";
-    SearchBooleanContext.SHOULD = "$should";
     return SearchBooleanContext;
 }());
 exports.SearchBooleanContext = SearchBooleanContext;
+SearchBooleanContext.BOOLEAN_CONTEXT = "$bool";
+SearchBooleanContext.MUST = "$must";
+SearchBooleanContext.SHOULD = "$should";

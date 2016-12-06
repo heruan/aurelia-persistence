@@ -1,6 +1,6 @@
-import {CancelablePromise} from "aurelia-utils";
-import {Query} from "./query";
-import {Sorting} from "./sorting";
+import { CancelablePromise} from "aurelia-utils";
+import { Query} from "./query";
+import { Sorting} from "./sorting";
 
 export interface EntityService<E extends Object> {
 
@@ -12,7 +12,7 @@ export interface EntityService<E extends Object> {
 
     get(params: Object, properties?: string[]): CancelablePromise<E>;
 
-    save<D>(entity: E, data?: D): CancelablePromise<E>;
+    save<E>(entity: E): CancelablePromise<E>;
 
     delete(entity: E): CancelablePromise<void>;
 

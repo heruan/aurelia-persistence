@@ -1,5 +1,5 @@
-import {SearchQuery} from "./search-query";
-import {Query} from "./query";
+import { SearchQuery} from "./search-query";
+import { Query} from "./query";
 
 export class SearchBooleanContext implements Query {
 
@@ -62,9 +62,9 @@ export class SearchBooleanContext implements Query {
 
     public toJSON(): any {
         if (this.map.size === 0) {
-            return {};
+            return { };
         } else {
-            let filter = {};
+            let filter = { };
             this.map.forEach((value, key) => filter[key] = value);
             return {
                 "$bool": filter

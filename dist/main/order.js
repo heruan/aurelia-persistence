@@ -15,9 +15,9 @@ var Order = (function () {
         order[this.property] = this.direction;
         return order;
     };
-    Order.ASC = 1;
-    Order.DESC = -1;
-    Order.NEUTRAL = 0;
     return Order;
 }());
 exports.Order = Order;
+Order.ASC = 1;
+Order.DESC = -1;
+Order.NEUTRAL = 0;

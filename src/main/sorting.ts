@@ -1,6 +1,6 @@
-import {autoinject} from "aurelia-dependency-injection";
-import {QueueMap} from "aurelia-utils";
-import {Order} from "./order";
+import { autoinject} from "aurelia-dependency-injection";
+import { QueueMap} from "aurelia-utils";
+import { Order} from "./order";
 
 @autoinject
 export class Sorting {
@@ -14,7 +14,7 @@ export class Sorting {
     }
 
     get order(): Object {
-        let sorting = {};
+        let sorting = { };
         this.map.forEach((order, property: string) => {
             sorting[property] = order.getDirection();
         });

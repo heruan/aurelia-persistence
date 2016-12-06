@@ -24,7 +24,7 @@ export class Order {
     }
 
     public toJSON(): any {
-        let order = {};
+        let order = { };
         order[this.property] = this.direction;
         return order;
     }

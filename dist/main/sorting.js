@@ -73,11 +73,11 @@ var Sorting = (function () {
         filter.order = object;
         return filter;
     };
-    Sorting.SORTING_EVENT = "aurelia.persistence.sorting";
-    Sorting = __decorate([
-        aurelia_dependency_injection_1.autoinject, 
-        __metadata('design:paramtypes', [Sorting])
-    ], Sorting);
     return Sorting;
 }());
+Sorting.SORTING_EVENT = "aurelia.persistence.sorting";
+Sorting = __decorate([
+    aurelia_dependency_injection_1.autoinject,
+    __metadata("design:paramtypes", [Sorting])
+], Sorting);
 exports.Sorting = Sorting;

@@ -1,5 +1,4 @@
-import {List, ArrayList} from "aurelia-utils";
-import {FilterQuery} from "./filter-query";
+import { FilterQuery} from "./filter-query";
 
 export class GroupFilter {
 
@@ -11,10 +10,10 @@ export class GroupFilter {
 
     public static NOR: string = "$nor";
 
-    private group: List<FilterQuery>;
+    private group: Set<FilterQuery>;
 
     public constructor(...filterQuery: FilterQuery[]) {
-        this.group = new ArrayList<FilterQuery>(filterQuery);
+        this.group = new Set<FilterQuery>(filterQuery);
     }
 
     public add(filter: FilterQuery): GroupFilter {
@@ -23,16 +22,16 @@ export class GroupFilter {
     }
 
     public remove(filter: FilterQuery): GroupFilter {
-        this.group.remove(filter);
+        this.group.delete(filter);
         return this;
     }
 
     get size() {
-        return this.group.size();
+        return this.group.size;
     }
 
     public toJSON(): any {
-        return this.group.toArray().filter(filter => filter && Object.keys(filter).length != 0);
+        return Array.from(this.group).filter(filter => filter && Object.keys(filter).length != 0);
     }
 
 }

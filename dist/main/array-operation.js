@@ -22,8 +22,8 @@ var ArrayOperation = (function () {
         this.operation.forEach(function (value, key) { return operation[key] = value; });
         return operation;
     };
-    ArrayOperation.EACH = "$each";
-    ArrayOperation.POSITION = "$position";
     return ArrayOperation;
 }());
 exports.ArrayOperation = ArrayOperation;
+ArrayOperation.EACH = "$each";
+ArrayOperation.POSITION = "$position";

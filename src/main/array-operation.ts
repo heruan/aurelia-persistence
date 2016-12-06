@@ -27,7 +27,7 @@ export class ArrayOperation {
     }
 
     public toJSON(): any {
-        let operation = {};
+        let operation = { };
         this.operation.forEach((value, key) => operation[key] = value);
         return operation;
     }

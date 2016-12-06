@@ -25,25 +25,26 @@ var EntityCollector = (function (_super) {
     function EntityCollector(bindingEngine, taskQueue, entityService, sorting, defaultFilter, properties) {
         if (sorting === void 0) { sorting = new sorting_1.Sorting(); }
         if (defaultFilter === void 0) { defaultFilter = new filter_query_1.FilterQuery(); }
-        _super.call(this);
-        this.loadCancelables = [];
-        this.countCancelables = [];
-        this.disposables = [];
-        this.limit = 25;
-        this.skip = 0;
-        this.countTotal = 0;
-        this.countFilter = 0;
-        this.entities = [];
-        this.bindings = {};
-        this.properties = [];
-        this.loading = false;
-        this.bindingEngine = bindingEngine;
-        this.taskQueue = taskQueue;
-        this.sorting = sorting;
-        this.defaultFilter = defaultFilter;
-        this.currentFilter = new filter_query_1.FilterQuery();
-        this.entityService = entityService;
-        this.properties = properties;
+        var _this = _super.call(this) || this;
+        _this.loadCancelables = [];
+        _this.countCancelables = [];
+        _this.disposables = [];
+        _this.limit = 25;
+        _this.skip = 0;
+        _this.countTotal = 0;
+        _this.countFilter = 0;
+        _this.entities = [];
+        _this.bindings = {};
+        _this.properties = [];
+        _this.loading = false;
+        _this.bindingEngine = bindingEngine;
+        _this.taskQueue = taskQueue;
+        _this.sorting = sorting;
+        _this.defaultFilter = defaultFilter;
+        _this.currentFilter = new filter_query_1.FilterQuery();
+        _this.entityService = entityService;
+        _this.properties = properties;
+        return _this;
     }
     EntityCollector.prototype.setDefaultFilter = function (filter) {
         this.defaultFilter = filter;
@@ -94,12 +95,16 @@ var EntityCollector = (function (_super) {
                 var replace = Array.isArray(filter.bindings[key]) ? filter.bindings[key] : [];
                 array.splice.apply(array, [0, array.length].concat(replace));
             }
-            else {
+            else if (filter.bindings.hasOwnProperty(key)) {
                 _this.bindings[key] = filter.bindings[key];
             }
+            else {
+                _this.bindings[key] = undefined;
+            }
         });
-        this.sorting = filter.sorting.copy();
         this.taskQueue.flushMicroTaskQueue();
+        // this.currentFilter = filter.query.copy();
+        this.sorting = filter.sorting.copy();
         this.entities.splice(0);
         if (this.currentFilter !== null) {
             this.retrieve(this.limit, 0);
@@ -178,12 +183,12 @@ var EntityCollector = (function (_super) {
             return entities;
         });
     };
-    EntityCollector.ENTITIES_LOADED = "entities.loaded";
-    EntityCollector.SCROLL_RETRIEVE_INCREMENT = 25;
-    EntityCollector = __decorate([
-        aurelia_dependency_injection_1.inject(aurelia_binding_1.BindingEngine, aurelia_task_queue_1.TaskQueue), 
-        __metadata('design:paramtypes', [aurelia_binding_1.BindingEngine, aurelia_task_queue_1.TaskQueue, Object, sorting_1.Sorting, filter_query_1.FilterQuery, Array])
-    ], EntityCollector);
     return EntityCollector;
 }(aurelia_event_aggregator_1.EventAggregator));
+EntityCollector.ENTITIES_LOADED = "entities.loaded";
+EntityCollector.SCROLL_RETRIEVE_INCREMENT = 25;
+EntityCollector = __decorate([
+    aurelia_dependency_injection_1.inject(aurelia_binding_1.BindingEngine, aurelia_task_queue_1.TaskQueue),
+    __metadata("design:paramtypes", [aurelia_binding_1.BindingEngine, aurelia_task_queue_1.TaskQueue, Object, sorting_1.Sorting, filter_query_1.FilterQuery, Array])
+], EntityCollector);
 exports.EntityCollector = EntityCollector;

@@ -1,4 +1,4 @@
-import {FilterQuery} from "./filter-query";
+import { FilterQuery} from "./filter-query";
 
 export class FieldFilter {
 
@@ -86,7 +86,7 @@ export class FieldFilter {
     }
 
     public toJSON(): any {
-        let filter = {};
+        let filter = { };
         this.map.forEach((value, key) => filter[key] = value)
         return filter;
     }

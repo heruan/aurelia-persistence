@@ -1,12 +1,12 @@
-import {inject} from "aurelia-dependency-injection";
-import {BindingEngine, Disposable} from "aurelia-binding";
-import {EventAggregator} from "aurelia-event-aggregator";
-import {CancelablePromise} from "aurelia-utils";
-import {TaskQueue} from "aurelia-task-queue";
-import {EntityService} from "./entity-service";
-import {Sorting} from "./sorting";
-import {FilterQuery} from "./filter-query";
-import {FilterBinding} from "./filter-binding";
+import { inject} from "aurelia-dependency-injection";
+import { BindingEngine, Disposable} from "aurelia-binding";
+import { EventAggregator} from "aurelia-event-aggregator";
+import { CancelablePromise} from "aurelia-utils";
+import { TaskQueue} from "aurelia-task-queue";
+import { EntityService} from "./entity-service";
+import { Sorting} from "./sorting";
+import { FilterQuery} from "./filter-query";
+import { FilterBinding} from "./filter-binding";
 
 @inject(BindingEngine, TaskQueue)
 export class EntityCollector<E extends Object> extends EventAggregator implements Disposable {
@@ -45,7 +45,7 @@ export class EntityCollector<E extends Object> extends EventAggregator implement
 
     public entities: E[] = [];
 
-    public bindings: Object = {};
+    public bindings: Object = { };
 
     public properties: string[] = [];
 
@@ -111,12 +111,15 @@ export class EntityCollector<E extends Object> extends EventAggregator implement
                 let array: any[] = this.bindings[key];
                 let replace: any[] = Array.isArray(filter.bindings[key]) ? filter.bindings[key] : [];
                 array.splice(0, array.length, ...replace);
-            } else {
+            } else if (filter.bindings.hasOwnProperty(key)) {
                 this.bindings[key] = filter.bindings[key];
+            } else {
+                this.bindings[key] = undefined;
             }
         });
-        this.sorting = filter.sorting.copy();
         this.taskQueue.flushMicroTaskQueue();
+        // this.currentFilter = filter.query.copy();
+        this.sorting = filter.sorting.copy();
         this.entities.splice(0);
         if (this.currentFilter !== null) {
             this.retrieve(this.limit, 0);
@@ -124,7 +127,7 @@ export class EntityCollector<E extends Object> extends EventAggregator implement
     }
 
     public save(name: string): FilterBinding {
-        let bindings = {};
+        let bindings = { };
         for (let key in this.bindings) {
             if (Array.isArray(this.bindings[key])) {
                 bindings[key] = this.bindings[key].slice();

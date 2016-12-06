@@ -6,6 +6,6 @@ export interface EntityService<E extends Object> {
     findOne(filter?: Query, skip?: number, sorting?: Sorting, properties?: string[]): CancelablePromise<E>;
     count(filter?: Query, limit?: number, skip?: number): CancelablePromise<number>;
     get(params: Object, properties?: string[]): CancelablePromise<E>;
-    save<D>(entity: E, data?: D): CancelablePromise<E>;
+    save<E>(entity: E): CancelablePromise<E>;
     delete(entity: E): CancelablePromise<void>;
 }
