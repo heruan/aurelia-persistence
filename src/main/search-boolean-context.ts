@@ -1,5 +1,5 @@
-import { SearchQuery} from "./search-query";
-import { Query} from "./query";
+import { SearchQuery } from "./search-query";
+import { Query } from "./query";
 
 export class SearchBooleanContext implements Query {
 

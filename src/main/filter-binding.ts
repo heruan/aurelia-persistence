@@ -1,5 +1,5 @@
-import { FilterQuery} from "./filter-query";
-import { Sorting} from "./sorting";
+import { FilterQuery } from "./filter-query";
+import { Sorting } from "./sorting";
 
 export class FilterBinding {
 

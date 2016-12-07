@@ -1,6 +1,6 @@
-import { CancelablePromise} from "aurelia-utils";
-import { Query} from "./query";
-import { Sorting} from "./sorting";
+import { CancelablePromise } from "aurelia-utils";
+import { Query } from "./query";
+import { Sorting } from "./sorting";
 
 export interface PersistenceManager {
 

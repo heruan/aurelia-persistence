@@ -1,4 +1,4 @@
-import { SearchQuery} from "./search-query";
+import { SearchQuery } from "./search-query";
 
 export class SearchTermQuery extends SearchQuery {
 

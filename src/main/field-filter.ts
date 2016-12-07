@@ -1,4 +1,4 @@
-import { FilterQuery} from "./filter-query";
+import { FilterQuery } from "./filter-query";
 
 export class FieldFilter {
 
