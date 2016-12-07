@@ -25,6 +25,7 @@
     "aurelia-binding": "^1.0.9",
     "aurelia-dependency-injection": "^1.2.0",
     "aurelia-event-aggregator": "^1.0.1",
+    "aurelia-task-queue": "^1.1.0",
     "aurelia-utils": "^0.2.2",
     "uniql": "^0.1.0",
     "uniql-mongodb": "^0.1.0"
