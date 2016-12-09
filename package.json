@@ -22,7 +22,7 @@
     "test": "gulp test"
   },
   "dependencies": {
-    "aurelia-binding": "^1.0.9",
+    "aurelia-binding": "^1.1.0",
     "aurelia-dependency-injection": "^1.2.0",
     "aurelia-event-aggregator": "^1.0.1",
     "aurelia-task-queue": "^1.1.0",
@@ -43,7 +43,7 @@
     "jasmine-reporters": "^2.2.0",
     "merge2": "^1.0.2",
     "run-sequence": "^1.2.2",
-    "typescript": "^2.1.1",
+    "typescript": "^2.1.4",
     "vinyl-paths": "^2.1.0"
   }
 }
