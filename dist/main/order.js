@@ -17,7 +17,9 @@ var Order = (function () {
     };
     return Order;
 }());
-exports.Order = Order;
 Order.ASC = 1;
 Order.DESC = -1;
 Order.NEUTRAL = 0;
+exports.Order = Order;
+
+//# sourceMappingURL=order.js.map

@@ -15,5 +15,7 @@ var TextFilter = (function () {
     };
     return TextFilter;
 }());
-exports.TextFilter = TextFilter;
 TextFilter.TEXT = "$text";
+exports.TextFilter = TextFilter;
+
+//# sourceMappingURL=text-filter.js.map

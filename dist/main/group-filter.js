@@ -3,7 +3,7 @@ var GroupFilter = (function () {
     function GroupFilter() {
         var filterQuery = [];
         for (var _i = 0; _i < arguments.length; _i++) {
-            filterQuery[_i - 0] = arguments[_i];
+            filterQuery[_i] = arguments[_i];
         }
         this.group = new Set(filterQuery);
     }
@@ -27,8 +27,10 @@ var GroupFilter = (function () {
     };
     return GroupFilter;
 }());
-exports.GroupFilter = GroupFilter;
 GroupFilter.OR = "$or";
 GroupFilter.AND = "$and";
 GroupFilter.NOT = "$not";
 GroupFilter.NOR = "$nor";
+exports.GroupFilter = GroupFilter;
+
+//# sourceMappingURL=group-filter.js.map

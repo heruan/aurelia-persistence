@@ -4,5 +4,7 @@ var SearchQuery = (function () {
     }
     return SearchQuery;
 }());
-exports.SearchQuery = SearchQuery;
 SearchQuery.SEARCH_EVENT = "aurelia.persistence.search.event";
+exports.SearchQuery = SearchQuery;
+
+//# sourceMappingURL=search-query.js.map

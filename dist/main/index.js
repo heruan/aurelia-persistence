@@ -15,3 +15,5 @@ var search_term_query_1 = require("./search-term-query");
 exports.SearchTermQuery = search_term_query_1.SearchTermQuery;
 var filter_binding_1 = require("./filter-binding");
 exports.FilterBinding = filter_binding_1.FilterBinding;
+
+//# sourceMappingURL=index.js.map

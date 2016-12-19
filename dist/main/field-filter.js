@@ -67,7 +67,6 @@ var FieldFilter = (function () {
     };
     return FieldFilter;
 }());
-exports.FieldFilter = FieldFilter;
 FieldFilter.EQ = "$eq";
 FieldFilter.GT = "$gt";
 FieldFilter.GTE = "$gte";
@@ -79,3 +78,6 @@ FieldFilter.NIN = "$nin";
 FieldFilter.MOD = "$mod";
 FieldFilter.REGEX = "$regex";
 FieldFilter.ELEM_MATCH = "$elemMatch";
+exports.FieldFilter = FieldFilter;
+
+//# sourceMappingURL=field-filter.js.map

@@ -35,7 +35,9 @@ var SearchTermQuery = (function (_super) {
     };
     return SearchTermQuery;
 }(search_query_1.SearchQuery));
-exports.SearchTermQuery = SearchTermQuery;
 SearchTermQuery.FIELDS = "$fields";
 SearchTermQuery.MATCHING = "$matching";
 SearchTermQuery.WILDCARD = "$wildcard";
+exports.SearchTermQuery = SearchTermQuery;
+
+//# sourceMappingURL=search-term-query.js.map

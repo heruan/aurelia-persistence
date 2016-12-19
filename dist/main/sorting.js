@@ -11,7 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var aurelia_dependency_injection_1 = require("aurelia-dependency-injection");
 var aurelia_utils_1 = require("aurelia-utils");
 var order_1 = require("./order");
-var Sorting = (function () {
+var Sorting = Sorting_1 = (function () {
     function Sorting(sorting) {
         this.map = sorting ? new aurelia_utils_1.QueueMap(sorting.map) : new aurelia_utils_1.QueueMap();
     }
@@ -63,21 +63,24 @@ var Sorting = (function () {
         return this;
     };
     Sorting.prototype.copy = function () {
-        return new Sorting(this);
+        return new Sorting_1(this);
     };
     Sorting.prototype.toJSON = function () {
         return this.order;
     };
     Sorting.fromJSON = function (object) {
-        var filter = new Sorting();
+        var filter = new Sorting_1();
         filter.order = object;
         return filter;
     };
     return Sorting;
 }());
 Sorting.SORTING_EVENT = "aurelia.persistence.sorting";
-Sorting = __decorate([
+Sorting = Sorting_1 = __decorate([
     aurelia_dependency_injection_1.autoinject,
     __metadata("design:paramtypes", [Sorting])
 ], Sorting);
 exports.Sorting = Sorting;
+var Sorting_1;
+
+//# sourceMappingURL=sorting.js.map

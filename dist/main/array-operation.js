@@ -24,6 +24,8 @@ var ArrayOperation = (function () {
     };
     return ArrayOperation;
 }());
-exports.ArrayOperation = ArrayOperation;
 ArrayOperation.EACH = "$each";
 ArrayOperation.POSITION = "$position";
+exports.ArrayOperation = ArrayOperation;
+
+//# sourceMappingURL=array-operation.js.map

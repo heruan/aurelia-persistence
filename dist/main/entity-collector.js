@@ -20,7 +20,7 @@ var aurelia_task_queue_1 = require("aurelia-task-queue");
 var sorting_1 = require("./sorting");
 var filter_query_1 = require("./filter-query");
 var filter_binding_1 = require("./filter-binding");
-var EntityCollector = (function (_super) {
+var EntityCollector = EntityCollector_1 = (function (_super) {
     __extends(EntityCollector, _super);
     function EntityCollector(bindingEngine, taskQueue, entityService, sorting, defaultFilter, properties) {
         if (sorting === void 0) { sorting = new sorting_1.Sorting(); }
@@ -146,7 +146,7 @@ var EntityCollector = (function (_super) {
     };
     EntityCollector.prototype.retrieveMore = function (increment) {
         var _this = this;
-        if (increment === void 0) { increment = EntityCollector.SCROLL_RETRIEVE_INCREMENT; }
+        if (increment === void 0) { increment = EntityCollector_1.SCROLL_RETRIEVE_INCREMENT; }
         var skip = this.limit;
         return this.load(increment, skip).then(this.concatEntities.bind(this)).then(function (success) { return _this.limit += increment; });
     };
@@ -179,7 +179,7 @@ var EntityCollector = (function (_super) {
             _this.loading = false;
             _this.countTotal = countTotal;
             _this.countFilter = countFilter;
-            _this.publish(EntityCollector.ENTITIES_LOADED, entities);
+            _this.publish(EntityCollector_1.ENTITIES_LOADED, entities);
             return entities;
         });
     };
@@ -187,8 +187,11 @@ var EntityCollector = (function (_super) {
 }(aurelia_event_aggregator_1.EventAggregator));
 EntityCollector.ENTITIES_LOADED = "entities.loaded";
 EntityCollector.SCROLL_RETRIEVE_INCREMENT = 25;
-EntityCollector = __decorate([
+EntityCollector = EntityCollector_1 = __decorate([
     aurelia_dependency_injection_1.inject(aurelia_binding_1.BindingEngine, aurelia_task_queue_1.TaskQueue),
     __metadata("design:paramtypes", [aurelia_binding_1.BindingEngine, aurelia_task_queue_1.TaskQueue, Object, sorting_1.Sorting, filter_query_1.FilterQuery, Array])
 ], EntityCollector);
 exports.EntityCollector = EntityCollector;
+var EntityCollector_1;
+
+//# sourceMappingURL=entity-collector.js.map

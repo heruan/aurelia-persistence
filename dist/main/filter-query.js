@@ -12,7 +12,7 @@ var aurelia_dependency_injection_1 = require("aurelia-dependency-injection");
 var group_filter_1 = require("./group-filter");
 var field_filter_1 = require("./field-filter");
 var text_filter_1 = require("./text-filter");
-var FilterQuery = (function () {
+var FilterQuery = FilterQuery_1 = (function () {
     function FilterQuery(filterQuery) {
         this.map = filterQuery ? new Map(filterQuery.map) : new Map();
     }
@@ -38,7 +38,7 @@ var FilterQuery = (function () {
     FilterQuery.prototype.or = function () {
         var filters = [];
         for (var _i = 0; _i < arguments.length; _i++) {
-            filters[_i - 0] = arguments[_i];
+            filters[_i] = arguments[_i];
         }
         var args = [group_filter_1.GroupFilter.OR];
         return this.group.apply(this, args.concat(filters));
@@ -46,7 +46,7 @@ var FilterQuery = (function () {
     FilterQuery.prototype.and = function () {
         var filters = [];
         for (var _i = 0; _i < arguments.length; _i++) {
-            filters[_i - 0] = arguments[_i];
+            filters[_i] = arguments[_i];
         }
         var args = [group_filter_1.GroupFilter.AND];
         return this.group.apply(this, args.concat(filters));
@@ -54,7 +54,7 @@ var FilterQuery = (function () {
     FilterQuery.prototype.not = function () {
         var filters = [];
         for (var _i = 0; _i < arguments.length; _i++) {
-            filters[_i - 0] = arguments[_i];
+            filters[_i] = arguments[_i];
         }
         var args = [group_filter_1.GroupFilter.NOT];
         return this.group.apply(this, args.concat(filters));
@@ -62,7 +62,7 @@ var FilterQuery = (function () {
     FilterQuery.prototype.nor = function () {
         var filters = [];
         for (var _i = 0; _i < arguments.length; _i++) {
-            filters[_i - 0] = arguments[_i];
+            filters[_i] = arguments[_i];
         }
         var args = [group_filter_1.GroupFilter.NOR];
         return this.group.apply(this, args.concat(filters));
@@ -85,7 +85,7 @@ var FilterQuery = (function () {
     FilterQuery.prototype.unsetOr = function () {
         var filters = [];
         for (var _i = 0; _i < arguments.length; _i++) {
-            filters[_i - 0] = arguments[_i];
+            filters[_i] = arguments[_i];
         }
         var args = [group_filter_1.GroupFilter.OR];
         return this.unsetGroup.apply(this, args.concat(filters));
@@ -93,7 +93,7 @@ var FilterQuery = (function () {
     FilterQuery.prototype.unsetAnd = function () {
         var filters = [];
         for (var _i = 0; _i < arguments.length; _i++) {
-            filters[_i - 0] = arguments[_i];
+            filters[_i] = arguments[_i];
         }
         var args = [group_filter_1.GroupFilter.AND];
         return this.unsetGroup.apply(this, args.concat(filters));
@@ -101,7 +101,7 @@ var FilterQuery = (function () {
     FilterQuery.prototype.unsetNot = function () {
         var filters = [];
         for (var _i = 0; _i < arguments.length; _i++) {
-            filters[_i - 0] = arguments[_i];
+            filters[_i] = arguments[_i];
         }
         var args = [group_filter_1.GroupFilter.NOT];
         return this.unsetGroup.apply(this, args.concat(filters));
@@ -109,7 +109,7 @@ var FilterQuery = (function () {
     FilterQuery.prototype.unsetNor = function () {
         var filters = [];
         for (var _i = 0; _i < arguments.length; _i++) {
-            filters[_i - 0] = arguments[_i];
+            filters[_i] = arguments[_i];
         }
         var args = [group_filter_1.GroupFilter.NOR];
         return this.unsetGroup.apply(this, args.concat(filters));
@@ -165,7 +165,7 @@ var FilterQuery = (function () {
         return this.field(fieldName, new field_filter_1.FieldFilter().elemMatch(filter));
     };
     FilterQuery.prototype.copy = function () {
-        return new FilterQuery(this);
+        return new FilterQuery_1(this);
     };
     FilterQuery.prototype.toJSON = function () {
         var filter = {};
@@ -173,20 +173,20 @@ var FilterQuery = (function () {
         return filter;
     };
     FilterQuery.fromJSON = function (object) {
-        var filter = new FilterQuery();
+        var filter = new FilterQuery_1();
         for (var field in object) {
             switch (field) {
                 case group_filter_1.GroupFilter.OR:
-                    filter.or.apply(filter, object[field].map(function (f) { return FilterQuery.fromJSON(f); }));
+                    filter.or.apply(filter, object[field].map(function (f) { return FilterQuery_1.fromJSON(f); }));
                     break;
                 case group_filter_1.GroupFilter.AND:
-                    filter.and.apply(filter, object[field].map(function (f) { return FilterQuery.fromJSON(f); }));
+                    filter.and.apply(filter, object[field].map(function (f) { return FilterQuery_1.fromJSON(f); }));
                     break;
                 case group_filter_1.GroupFilter.NOT:
-                    filter.not.apply(filter, object[field].map(function (f) { return FilterQuery.fromJSON(f); }));
+                    filter.not.apply(filter, object[field].map(function (f) { return FilterQuery_1.fromJSON(f); }));
                     break;
                 case group_filter_1.GroupFilter.NOR:
-                    filter.nor.apply(filter, object[field].map(function (f) { return FilterQuery.fromJSON(f); }));
+                    filter.nor.apply(filter, object[field].map(function (f) { return FilterQuery_1.fromJSON(f); }));
                     break;
                 case text_filter_1.TextFilter.TEXT:
                     filter.text(text_filter_1.TextFilter.fromJSON(object[field]));
@@ -199,8 +199,11 @@ var FilterQuery = (function () {
     return FilterQuery;
 }());
 FilterQuery.FILTERING_EVENT = "aurelia.persistence.filtering";
-FilterQuery = __decorate([
+FilterQuery = FilterQuery_1 = __decorate([
     aurelia_dependency_injection_1.autoinject,
     __metadata("design:paramtypes", [FilterQuery])
 ], FilterQuery);
 exports.FilterQuery = FilterQuery;
+var FilterQuery_1;
+
+//# sourceMappingURL=filter-query.js.map

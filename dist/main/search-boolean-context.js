@@ -6,7 +6,7 @@ var SearchBooleanContext = (function () {
     SearchBooleanContext.prototype.and = function () {
         var queries = [];
         for (var _i = 0; _i < arguments.length; _i++) {
-            queries[_i - 0] = arguments[_i];
+            queries[_i] = arguments[_i];
         }
         return (_a = this.bool).call.apply(_a, [this, SearchBooleanContext.MUST].concat(queries));
         var _a;
@@ -14,7 +14,7 @@ var SearchBooleanContext = (function () {
     SearchBooleanContext.prototype.or = function () {
         var queries = [];
         for (var _i = 0; _i < arguments.length; _i++) {
-            queries[_i - 0] = arguments[_i];
+            queries[_i] = arguments[_i];
         }
         return (_a = this.bool).call.apply(_a, [this, SearchBooleanContext.SHOULD].concat(queries));
         var _a;
@@ -37,7 +37,7 @@ var SearchBooleanContext = (function () {
     SearchBooleanContext.prototype.unsetAnd = function () {
         var queries = [];
         for (var _i = 0; _i < arguments.length; _i++) {
-            queries[_i - 0] = arguments[_i];
+            queries[_i] = arguments[_i];
         }
         return (_a = this.unsetBool).call.apply(_a, [this, SearchBooleanContext.MUST].concat(queries));
         var _a;
@@ -45,7 +45,7 @@ var SearchBooleanContext = (function () {
     SearchBooleanContext.prototype.unsetOr = function () {
         var queries = [];
         for (var _i = 0; _i < arguments.length; _i++) {
-            queries[_i - 0] = arguments[_i];
+            queries[_i] = arguments[_i];
         }
         return (_a = this.unsetBool).call.apply(_a, [this, SearchBooleanContext.SHOULD].concat(queries));
         var _a;
@@ -84,7 +84,9 @@ var SearchBooleanContext = (function () {
     };
     return SearchBooleanContext;
 }());
-exports.SearchBooleanContext = SearchBooleanContext;
 SearchBooleanContext.BOOLEAN_CONTEXT = "$bool";
 SearchBooleanContext.MUST = "$must";
 SearchBooleanContext.SHOULD = "$should";
+exports.SearchBooleanContext = SearchBooleanContext;
+
+//# sourceMappingURL=search-boolean-context.js.map
