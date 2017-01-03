@@ -17,7 +17,12 @@ export class FilterBinding {
 
     public loading: boolean = false;
 
-    public constructor(name?: string, query?: FilterQuery, sorting: Sorting = new Sorting(), bindings: Object = { }, startingCount: number = 0, icon: string = "filter") {
+    public constructor(name?: string,
+            query?: FilterQuery,
+            sorting: Sorting = new Sorting(),
+            bindings: Object = Object.create(null),
+            startingCount: number = 0,
+            icon: string = "filter") {
         this.name = name;
         this.query = query;
         this.sorting = sorting;

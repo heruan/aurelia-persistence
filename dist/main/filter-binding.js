@@ -3,7 +3,7 @@ var sorting_1 = require("./sorting");
 var FilterBinding = (function () {
     function FilterBinding(name, query, sorting, bindings, startingCount, icon) {
         if (sorting === void 0) { sorting = new sorting_1.Sorting(); }
-        if (bindings === void 0) { bindings = {}; }
+        if (bindings === void 0) { bindings = Object.create(null); }
         if (startingCount === void 0) { startingCount = 0; }
         if (icon === void 0) { icon = "filter"; }
         this.count = 0;
