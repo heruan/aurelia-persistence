@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var filter_query_1 = require("./filter-query");
 var FieldFilter = (function () {
     function FieldFilter() {

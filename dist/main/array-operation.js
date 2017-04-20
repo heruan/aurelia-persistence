@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var ArrayOperation = (function () {
     function ArrayOperation() {
         this.operation = new Map();

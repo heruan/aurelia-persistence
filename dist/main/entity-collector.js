@@ -1,9 +1,14 @@
 "use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -13,6 +18,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var aurelia_dependency_injection_1 = require("aurelia-dependency-injection");
 var aurelia_binding_1 = require("aurelia-binding");
 var aurelia_event_aggregator_1 = require("aurelia-event-aggregator");
@@ -95,7 +101,7 @@ var EntityCollector = EntityCollector_1 = (function (_super) {
                 var replace = Array.isArray(filter.bindings[key]) ? filter.bindings[key] : [];
                 array.splice.apply(array, [0, array.length].concat(replace));
             }
-            else if (filter.bindings.hasOwnProperty(key)) {
+            else if (filter.bindings && filter.bindings.hasOwnProperty(key)) {
                 _this.bindings[key] = filter.bindings[key];
             }
             else {
@@ -104,7 +110,7 @@ var EntityCollector = EntityCollector_1 = (function (_super) {
         });
         this.taskQueue.flushMicroTaskQueue();
         // this.currentFilter = filter.query.copy();
-        this.sorting = filter.sorting.copy();
+        this.sorting = new sorting_1.Sorting(filter.sorting);
         this.entities.splice(0);
         if (this.currentFilter !== null) {
             this.retrieve(this.limit, 0);
@@ -120,7 +126,7 @@ var EntityCollector = EntityCollector_1 = (function (_super) {
                 bindings[key] = this.bindings[key];
             }
         }
-        return new filter_binding_1.FilterBinding(name, this.currentFilter.copy(), this.sorting.copy(), bindings, this.countFilter);
+        return new filter_binding_1.FilterBinding(name, new filter_query_1.FilterQuery(this.currentFilter), new sorting_1.Sorting(this.sorting), bindings, this.countFilter);
     };
     EntityCollector.prototype.reset = function () {
         for (var field in this.bindings) {

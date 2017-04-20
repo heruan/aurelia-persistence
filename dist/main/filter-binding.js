@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var sorting_1 = require("./sorting");
 var FilterBinding = (function () {
     function FilterBinding(name, query, sorting, bindings, startingCount, icon) {

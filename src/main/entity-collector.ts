@@ -111,7 +111,7 @@ export class EntityCollector<E extends Object> extends EventAggregator implement
                 let array: any[] = this.bindings[key];
                 let replace: any[] = Array.isArray(filter.bindings[key]) ? filter.bindings[key] : [];
                 array.splice(0, array.length, ...replace);
-            } else if (filter.bindings.hasOwnProperty(key)) {
+            } else if (filter.bindings && filter.bindings.hasOwnProperty(key)) {
                 this.bindings[key] = filter.bindings[key];
             } else {
                 this.bindings[key] = undefined;
@@ -119,7 +119,7 @@ export class EntityCollector<E extends Object> extends EventAggregator implement
         });
         this.taskQueue.flushMicroTaskQueue();
         // this.currentFilter = filter.query.copy();
-        this.sorting = filter.sorting.copy();
+        this.sorting = new Sorting(filter.sorting);
         this.entities.splice(0);
         if (this.currentFilter !== null) {
             this.retrieve(this.limit, 0);
@@ -135,7 +135,7 @@ export class EntityCollector<E extends Object> extends EventAggregator implement
                 bindings[key] = this.bindings[key];
             }
         }
-        return new FilterBinding(name, this.currentFilter.copy(), this.sorting.copy(), bindings, this.countFilter);
+        return new FilterBinding(name, new FilterQuery(this.currentFilter), new Sorting(this.sorting), bindings, this.countFilter);
     }
 
     public reset(): void {

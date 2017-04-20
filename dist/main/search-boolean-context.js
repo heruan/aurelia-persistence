@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var SearchBooleanContext = (function () {
     function SearchBooleanContext(searchBooleanContext) {
         this.map = searchBooleanContext ? new Map(searchBooleanContext.map) : new Map();

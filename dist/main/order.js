@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Order = (function () {
     function Order(property, direction) {
         this.property = property;

@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var entity_collector_1 = require("./entity-collector");
 exports.EntityCollector = entity_collector_1.EntityCollector;
 var sorting_1 = require("./sorting");
