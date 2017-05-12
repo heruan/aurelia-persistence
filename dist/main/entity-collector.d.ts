@@ -35,7 +35,7 @@ export declare class EntityCollector<E extends Object> extends EventAggregator i
     onCollection<V>(property: string, callback: (filter: FilterQuery, value: V[]) => void, autoRetrieve?: boolean): EntityCollector<E>;
     count(filter?: FilterQuery): CancelablePromise<number>;
     applyFilter(callback: (FilterQuery, any) => void, value: any): void;
-    activate(filter: FilterBinding): void;
+    activate(filter: FilterBinding, filterMapper?: Function): void;
     save(name: string): FilterBinding;
     reset(): void;
     dispose(): void;

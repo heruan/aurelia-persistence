@@ -34,7 +34,7 @@ export class FilterBinding {
     public static fromJSON(object: Object): FilterBinding {
         let filterBinding = new FilterBinding();
         if (object.hasOwnProperty("name"))      filterBinding.name      = object["name"];
-        if (object.hasOwnProperty("query"))     filterBinding.query     = object["query"];
+        if (object.hasOwnProperty("query"))     filterBinding.query     = FilterQuery.fromJSON(object["query"]);
         if (object.hasOwnProperty("sorting"))   filterBinding.sorting   = Sorting.fromJSON(object["sorting"]);
         if (object.hasOwnProperty("bindings"))  filterBinding.bindings  = object["bindings"];
         if (object.hasOwnProperty("count"))     filterBinding.count     = object["count"];

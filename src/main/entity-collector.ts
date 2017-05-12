@@ -105,7 +105,7 @@ export class EntityCollector<E extends Object> extends EventAggregator implement
         callback.call(this, this.currentFilter, value);
     }
 
-    public activate(filter: FilterBinding): void {
+    public activate(filter: FilterBinding, filterMapper: Function = f => new FilterQuery(f)): void {
         Object.keys(this.bindings).forEach(key => {
             if (Array.isArray(this.bindings[key])) {
                 let array: any[] = this.bindings[key];
@@ -118,7 +118,7 @@ export class EntityCollector<E extends Object> extends EventAggregator implement
             }
         });
         this.taskQueue.flushMicroTaskQueue();
-        // this.currentFilter = filter.query.copy();
+        this.currentFilter = filterMapper(filter.query);
         this.sorting = new Sorting(filter.sorting);
         this.entities.splice(0);
         if (this.currentFilter !== null) {

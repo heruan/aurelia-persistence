@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var filter_query_1 = require("./filter-query");
 var sorting_1 = require("./sorting");
 var FilterBinding = (function () {
     function FilterBinding(name, query, sorting, bindings, startingCount, icon) {
@@ -21,7 +22,7 @@ var FilterBinding = (function () {
         if (object.hasOwnProperty("name"))
             filterBinding.name = object["name"];
         if (object.hasOwnProperty("query"))
-            filterBinding.query = object["query"];
+            filterBinding.query = filter_query_1.FilterQuery.fromJSON(object["query"]);
         if (object.hasOwnProperty("sorting"))
             filterBinding.sorting = sorting_1.Sorting.fromJSON(object["sorting"]);
         if (object.hasOwnProperty("bindings"))

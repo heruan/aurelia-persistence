@@ -93,8 +93,9 @@ var EntityCollector = EntityCollector_1 = (function (_super) {
     EntityCollector.prototype.applyFilter = function (callback, value) {
         callback.call(this, this.currentFilter, value);
     };
-    EntityCollector.prototype.activate = function (filter) {
+    EntityCollector.prototype.activate = function (filter, filterMapper) {
         var _this = this;
+        if (filterMapper === void 0) { filterMapper = function (f) { return new filter_query_1.FilterQuery(f); }; }
         Object.keys(this.bindings).forEach(function (key) {
             if (Array.isArray(_this.bindings[key])) {
                 var array = _this.bindings[key];
@@ -109,7 +110,7 @@ var EntityCollector = EntityCollector_1 = (function (_super) {
             }
         });
         this.taskQueue.flushMicroTaskQueue();
-        // this.currentFilter = filter.query.copy();
+        this.currentFilter = filterMapper(filter.query);
         this.sorting = new sorting_1.Sorting(filter.sorting);
         this.entities.splice(0);
         if (this.currentFilter !== null) {
